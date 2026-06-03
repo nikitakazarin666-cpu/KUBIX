@@ -1,693 +1,806 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0a0a0f">
-    <title>KUBIX - Бьюти-коворкинг</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#0A0A0B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KUBIX">
+<title>KUBIX — Beauty Coworking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --gold:#C9A96E;--gold-light:#E8D5B0;--gold-dark:#8B6F3E;
+  --bg:#0A0A0B;--surface:#111113;--surface2:#18181B;--surface3:#222227;
+  --text:#F5F0E8;--text2:#A09880;--text3:#5A5448;
+}
+html,body{height:100%;background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);overflow:hidden}
+.app{width:100%;max-width:430px;margin:0 auto;height:100vh;display:flex;flex-direction:column;background:var(--bg);position:relative;overflow:hidden}
 
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'dark': '#0a0a0f',
-                        'card': '#1a1a2e',
-                        'accent': '#c9a84c',
-                        'accent-light': '#e8d5a3',
-                        'glass': 'rgba(26, 26, 46, 0.7)',
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #0a0a0f;
-            color: #ffffff;
-            overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        
-        .glass-effect {
-            background: rgba(26, 26, 46, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(201, 168, 76, 0.1);
-        }
-        
-        .gradient-accent {
-            background: linear-gradient(135deg, #c9a84c 0%, #e8d5a3 50%, #c9a84c 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #c9a84c 0%, #b8941f 100%);
-            border: none;
-            color: #0a0a0f;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(201, 168, 76, 0.3);
-        }
-        
-        .btn-primary:active {
-            transform: scale(0.95);
-            box-shadow: 0 2px 8px rgba(201, 168, 76, 0.2);
-        }
-        
-        .cube-container {
-            width: 220px;
-            height: 220px;
-            margin: 0 auto;
-            perspective: 1000px;
-        }
-        
-        .screen {
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-        
-        .screen.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-        }
-        
-        .floating {
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        .qr-code-container {
-            background: white;
-            padding: 12px;
-            border-radius: 12px;
-            display: inline-block;
-        }
-        
-        .date-picker, .time-picker {
-            background: rgba(26, 26, 46, 0.8);
-            border: 1px solid rgba(201, 168, 76, 0.3);
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            width: 100%;
-            margin-top: 6px;
-        }
-        
-        input[type="date"]::-webkit-calendar-picker-indicator,
-        input[type="time"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-        }
-        
-        .nav-item {
-            transition: all 0.3s ease;
-            cursor: pointer;
-            color: #888899;
-        }
-        
-        .nav-item.active {
-            color: #c9a84c;
-        }
-    </style>
+/* NAV */
+.nav{display:flex;justify-content:space-around;padding:12px 0 env(safe-area-inset-bottom,12px);background:var(--bg);border-top:0.5px solid #2A2A2F;position:relative;z-index:10;flex-shrink:0}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;color:var(--text3);cursor:pointer;transition:.2s;padding:4px 20px;font-family:inherit}
+.nav-btn.active{color:var(--gold)}
+.nav-btn span{font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.nav-btn i{font-size:22px}
+
+/* SCREENS */
+.screen{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.screen::-webkit-scrollbar{display:none}
+
+/* HOME */
+.home-header{padding:48px 24px 0;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;letter-spacing:.15em;color:var(--gold)}
+.logo span{color:var(--text3);font-size:11px;display:block;letter-spacing:.2em;margin-top:-2px;font-family:'DM Sans',sans-serif;font-weight:300}
+.notif-btn{width:38px;height:38px;border-radius:50%;border:0.5px solid var(--surface3);background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;position:relative}
+.notif-dot{width:7px;height:7px;background:var(--gold);border-radius:50%;position:absolute;top:8px;right:8px;border:1.5px solid var(--bg)}
+
+/* CUBE SCENE */
+.cube-scene{display:flex;flex-direction:column;align-items:center;padding:32px 24px 24px;position:relative}
+.cube-wrap{width:150px;height:150px;perspective:450px;margin-bottom:22px;cursor:pointer}
+.cube{width:100%;height:100%;transform-style:preserve-3d;animation:rotateCube 9s linear infinite;position:relative}
+.cube.paused{animation-play-state:paused}
+.face{position:absolute;width:150px;height:150px;border:0.5px solid rgba(201,169,110,.3);display:flex;align-items:center;justify-content:center;backface-visibility:visible;font-family:'Cormorant Garamond',serif}
+.face-front{background:rgba(201,169,110,.07);transform:translateZ(75px)}
+.face-back{background:rgba(201,169,110,.05);transform:rotateY(180deg) translateZ(75px)}
+.face-left{background:rgba(201,169,110,.04);transform:rotateY(-90deg) translateZ(75px)}
+.face-right{background:rgba(201,169,110,.06);transform:rotateY(90deg) translateZ(75px)}
+.face-top{background:rgba(201,169,110,.08);transform:rotateX(90deg) translateZ(75px)}
+.face-bottom{background:rgba(201,169,110,.03);transform:rotateX(-90deg) translateZ(75px)}
+.face-front::after{content:'◈';font-size:44px;color:rgba(201,169,110,.6)}
+.face-back::after{content:'◇';font-size:38px;color:rgba(201,169,110,.4)}
+.face-left::after,.face-right::after{content:'◆';font-size:30px;color:rgba(201,169,110,.3)}
+.face-top::after,.face-bottom::after{content:'◈';font-size:26px;color:rgba(201,169,110,.25)}
+@keyframes rotateCube{0%{transform:rotateX(15deg) rotateY(0)}100%{transform:rotateX(15deg) rotateY(360deg)}}
+.glow-ring{position:absolute;width:220px;height:220px;border-radius:50%;border:0.5px solid rgba(201,169,110,.07);top:8px;pointer-events:none}
+.glow-ring2{position:absolute;width:280px;height:280px;border-radius:50%;border:0.5px solid rgba(201,169,110,.04);top:-20px;pointer-events:none}
+
+.balance-label{font-size:11px;letter-spacing:.2em;color:var(--text3);text-transform:uppercase;margin-bottom:8px}
+.balance-val{font-family:'Cormorant Garamond',serif;font-size:58px;font-weight:300;color:var(--gold);line-height:1;transition:.3s}
+.balance-sub{font-size:12px;color:var(--text3);margin-top:6px;letter-spacing:.1em}
+
+/* PACKAGES */
+.section-title{font-size:11px;letter-spacing:.2em;color:var(--text3);text-transform:uppercase;padding:0 24px;margin-bottom:14px}
+.packages{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 24px}
+.pkg{background:var(--surface);border:0.5px solid var(--surface3);border-radius:14px;padding:16px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:.2s;position:relative;overflow:hidden;user-select:none}
+.pkg:active{transform:scale(.95)}
+.pkg.popular{border-color:rgba(201,169,110,.35)}
+.pkg-badge{position:absolute;top:0;right:0;background:var(--gold);color:#0A0A0B;font-size:9px;padding:3px 8px;border-radius:0 14px 0 8px;letter-spacing:.08em;font-weight:500}
+.pkg-icon{font-size:24px;color:var(--gold)}
+.pkg-amount{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--text);font-weight:300}
+.pkg-unit{font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase}
+.pkg-price{font-size:14px;color:var(--gold);font-weight:500;margin-top:4px}
+
+/* ACTIVITY */
+.activity{padding:24px 24px 8px}
+.activity-list{display:flex;flex-direction:column;gap:10px}
+.act-item{background:var(--surface);border:0.5px solid var(--surface3);border-radius:12px;padding:13px 14px;display:flex;align-items:center;gap:12px}
+.act-icon{width:36px;height:36px;border-radius:9px;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:16px;flex-shrink:0}
+.act-info{flex:1}
+.act-name{font-size:13px;color:var(--text);font-weight:400}
+.act-date{font-size:11px;color:var(--text3);margin-top:2px}
+.act-amount{font-size:13px;font-weight:500}
+.act-plus{color:#7EC8A0}.act-minus{color:#E88A8A}
+
+/* LOCATIONS */
+.loc-header{padding:48px 24px 20px;display:flex;justify-content:space-between;align-items:flex-end}
+.page-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--text);line-height:1.15}
+.page-title em{color:var(--gold);font-style:normal}
+.filter-scroll{display:flex;gap:8px;padding:0 24px 18px;overflow-x:auto;scrollbar-width:none}
+.filter-scroll::-webkit-scrollbar{display:none}
+.filter-chip{flex-shrink:0;padding:7px 16px;border-radius:20px;border:0.5px solid var(--surface3);background:var(--surface);font-size:12px;color:var(--text2);cursor:pointer;white-space:nowrap;transition:.15s;font-family:inherit;user-select:none}
+.filter-chip.active{background:rgba(201,169,110,.12);border-color:var(--gold);color:var(--gold)}
+.loc-list{padding:0 24px;display:flex;flex-direction:column;gap:16px}
+.loc-card{background:var(--surface);border:0.5px solid var(--surface3);border-radius:18px;overflow:hidden;transition:.2s;display:flex;flex-direction:column}
+.loc-card.hidden{display:none !important}
+
+/* PHOTO SLIDER */
+.loc-img-container{width:100%;height:140px;position:relative;overflow:hidden}
+.loc-slider{display:flex;width:100%;height:100%;overflow-x:scroll;scroll-snap-type:x mandatory;scrollbar-width:none}
+.loc-slider::-webkit-scrollbar{display:none}
+.loc-slide{flex:0 0 100%;width:100%;height:100%;scroll-snap-align:start;position:relative}
+.loc-slide img{width:100%;height:100%;object-fit:cover}
+.slider-arrow{position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:rgba(16,16,19,0.7);border:0.5px solid rgba(255,255,255,0.1);color:var(--text);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;z-index:2;transition:0.2s}
+.slider-arrow:active{background:var(--gold);color:#0A0A0B}
+.arrow-left{left:8px}
+.arrow-right{right:8px}
+
+/* LIVE STATUS */
+.status-indicator{position:absolute;top:12px;left:12px;z-index:3;padding:4px 8px;border-radius:6px;font-size:10px;font-weight:500;backdrop-filter:blur(4px);letter-spacing:0.02em}
+.status-free{background:rgba(126,200,160,0.15);color:#7EC8A0;border:0.5px solid rgba(126,200,160,0.3)}
+.status-busy{background:rgba(232,138,138,0.15);color:#E88A8A;border:0.5px solid rgba(232,138,138,0.3)}
+
+.loc-body{padding:15px}
+.loc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.loc-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--text);line-height:1.2}
+.loc-rating{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--gold)}
+.loc-addr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px}
+.loc-addr{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:4px}
+.map-link-btn{color:var(--text2);font-size:14px;cursor:pointer;transition:0.15s;padding:2px}
+.map-link-btn:active{color:var(--gold)}
+
+.loc-tags{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.tag{font-size:10px;padding:3px 9px;border-radius:6px;background:var(--surface2);color:var(--text3);border:0.5px solid var(--surface3);letter-spacing:.04em}
+
+/* ACCORDION ACCESORIES */
+.accordion-btn{background:none;border:none;color:var(--gold-light);font-size:11px;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:4px;padding:4px 0 10px;letter-spacing:0.04em}
+.accordion-btn i{transition: 0.2s; font-size:12px}
+.accordion-btn.open i{transform:rotate(180deg)}
+.loc-details{max-height:0;overflow:hidden;transition:max-height 0.25s ease-out;padding-left:2px}
+.details-content{padding-bottom:14px;font-size:11px;color:var(--text2);line-height:1.5;display:flex;flex-direction:column;gap:4px}
+.details-content span{display:flex;align-items:center;gap:6px}
+.details-content i{color:var(--gold);font-size:12px}
+
+.loc-footer{display:flex;align-items:center;justify-content:space-between;border-top:0.5px solid var(--surface3);padding-top:12px}
+.loc-price{display:flex;align-items:baseline;gap:5px}
+.price-val{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);font-weight:300}
+.price-unit{font-size:11px;color:var(--text3)}
+.book-btn{background:rgba(201,169,110,.1);border:0.5px solid rgba(201,169,110,.4);color:var(--gold);padding:10px 18px;border-radius:10px;font-size:12px;cursor:pointer;font-family:inherit;transition:.2s;letter-spacing:.05em;user-select:none}
+.book-btn:active{background:var(--gold);color:#0A0A0B;transform:scale(.96)}
+
+/* MODAL */
+.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.8);z-index:100;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:.25s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal-sheet{background:var(--surface);border-radius:22px 22px 0 0;padding:22px 22px 40px;width:100%;border-top:0.5px solid var(--surface3);transform:translateY(40px);transition:.25s}
+.modal-overlay.open .modal-sheet{transform:translateY(0)}
+.modal-handle{width:40px;height:3px;background:var(--surface3);border-radius:2px;margin:0 auto 20px}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--text);margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--text3);margin-bottom:20px;letter-spacing:.05em}
+.field-label{font-size:11px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:9px}
+.field{margin-bottom:18px}
+.date-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.date-chip{background:var(--surface2);border:0.5px solid var(--surface3);border-radius:10px;padding:9px 4px;text-align:center;cursor:pointer;transition:.15s;user-select:none}
+.date-chip.sel{background:rgba(201,169,110,.12);border-color:var(--gold)}
+.dc-day{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.dc-num{font-size:18px;color:var(--text);font-family:'Cormorant Garamond',serif;font-weight:300;margin-top:1px}
+.time-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.time-chip{background:var(--surface2);border:0.5px solid var(--surface3);border-radius:10px;padding:9px 4px;text-align:center;font-size:12px;color:var(--text2);cursor:pointer;transition:.15s;user-select:none}
+.time-chip.sel{background:rgba(201,169,110,.12);border-color:var(--gold);color:var(--gold)}
+.dur-row{display:flex;gap:8px}
+.dur-btn{flex:1;background:var(--surface2);border:0.5px solid var(--surface3);border-radius:10px;padding:10px;text-align:center;font-size:13px;color:var(--text2);cursor:pointer;transition:.15s;font-family:inherit;user-select:none}
+.dur-btn.sel{background:rgba(201,169,110,.12);border-color:var(--gold);color:var(--gold)}
+.cost-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-top:0.5px solid var(--surface3);margin:18px 0 16px}
+.cost-label{font-size:13px;color:var(--text2)}
+.cost-val{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);font-weight:300}
+.confirm-btn{width:100%;background:var(--gold);color:#0A0A0B;border:none;padding:15px;border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;letter-spacing:.08em;transition:.15s;user-select:none}
+.confirm-btn:active{transform:scale(.97);background:var(--gold-light)}
+
+/* PROFILE */
+.prof-header{padding:48px 24px 16px}
+.avatar-row{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.avatar{width:60px;height:60px;border-radius:50%;background:rgba(201,169,110,.1);border:0.5px solid rgba(201,169,110,.3);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);flex-shrink:0}
+.prof-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--text)}
+.prof-type{font-size:12px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:3px}
+.stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px;padding:0 24px}
+.stat-card{background:var(--surface);border:0.5px solid var(--surface3);border-radius:12px;padding:14px;text-align:center}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);font-weight:300}
+.stat-lbl{font-size:10px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-top:3px}
+.bookings-list{padding:0 24px;display:flex;flex-direction:column;gap:13px}
+.booking-card{background:var(--surface);border:0.5px solid var(--surface3);border-radius:16px;overflow:hidden}
+.booking-top{padding:15px;border-bottom:0.5px solid var(--surface3);display:flex;justify-content:space-between;align-items:flex-start}
+.booking-place{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--text);font-weight:300}
+.booking-addr{font-size:11px;color:var(--text3);margin-top:2px}
+.status-badge{padding:4px 11px;border-radius:7px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:500}
+.status-active{background:rgba(126,200,160,.12);color:#7EC8A0;border:0.5px solid rgba(126,200,160,.3)}
+.status-done{background:rgba(90,84,72,.2);color:var(--text3);border:0.5px solid var(--surface3)}
+.booking-mid{padding:12px 15px;display:flex;gap:14px;flex-wrap:wrap;border-bottom:0.5px solid var(--surface3)}
+.bk-info{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)}
+.bk-info i{color:var(--gold);font-size:14px}
+.booking-qr{padding:15px;display:flex;align-items:center;gap:14px}
+.qr-box{width:64px;height:64px;flex-shrink:0}
+.qr-desc{font-size:11px;color:var(--text3);line-height:1.5}
+.qr-code-num{font-size:13px;color:var(--gold);font-weight:500;margin-top:5px;letter-spacing:.1em}
+
+/* TOAST */
+.toast{position:absolute;top:20px;left:50%;transform:translateX(-50%) translateY(-70px);background:var(--surface2);border:0.5px solid rgba(201,169,110,.3);color:var(--text);padding:11px 22px;border-radius:12px;font-size:13px;z-index:200;transition:.3s;white-space:nowrap;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* SUCCESS */
+.success-overlay{position:absolute;inset:0;background:var(--bg);z-index:150;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;opacity:0;pointer-events:none;transition:.35s}
+.success-overlay.show{opacity:1;pointer-events:all}
+.success-icon{width:88px;height:88px;border-radius:50%;background:rgba(201,169,110,.1);border:0.5px solid rgba(201,169,110,.35);display:flex;align-items:center;justify-content:center;font-size:40px;animation:pulsate 2s ease-in-out infinite}
+@keyframes pulsate{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--gold);font-weight:300}
+.success-sub{font-size:13px;color:var(--text3);text-align:center;max-width:260px;line-height:1.7}
+.success-back{margin-top:6px;background:rgba(201,169,110,.1);border:0.5px solid rgba(201,169,110,.4);color:var(--gold);padding:13px 32px;border-radius:12px;font-size:13px;cursor:pointer;font-family:inherit;letter-spacing:.08em}
+
+.hidden{display:none!important}
+</style>
 </head>
 <body>
-    <div id="app" class="min-h-screen max-w-md mx-auto relative pb-24">
-        
-        <div class="p-4 flex justify-between items-center border-b border-accent/10 glass-effect sticky top-0 z-40">
-            <div class="flex items-center gap-3">
-                <div id="user-avatar" class="w-9 height-9 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-accent text-sm font-bold">
-                    <i class="fas fa-user-cosmetic"></i>
-                </div>
-                <div>
-                    <p class="text-xs text-gray-400">Приветствуем,</p>
-                    <p id="user-name" class="text-sm font-semibold text-white">Бьюти-Мастер</p>
-                </div>
-            </div>
-            <div class="text-right">
-                <span class="text-xs bg-accent/10 border border-accent/20 text-accent px-2.5 py-1 rounded-full font-medium">
-                    1 ◈ = 10 ₽
-                </span>
-            </div>
-        </div>
+<div class="app" id="app">
+  <div class="toast" id="toast"></div>
 
-        <div id="home-screen" class="screen active p-5">
-            <div class="cube-container mb-4 floating" id="cube-container">
-                <div id="three-cube" style="width: 100%; height: 100%;"></div>
-                <div class="text-center -mt-8 relative z-10">
-                    <p class="text-gray-400 text-xs mb-0.5">Баланс личного счета</p>
-                    <p class="text-4xl font-extrabold gradient-accent" id="balance-display">150</p>
-                    <p class="text-gray-400 text-xs mt-0.5">кубиков (◈)</p>
-                </div>
-            </div>
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-icon">◈</div>
+    <div class="success-title">Забронировано</div>
+    <div class="success-sub" id="successText">Ваше место успешно зарезервировано.</div>
+    <button class="success-back" onclick="closeSuccess()">Перейти в профиль</button>
+  </div>
 
-            <div class="p-3.5 rounded-xl glass-effect mb-6 flex gap-3 items-center text-xs text-gray-300">
-                <i class="fas fa-info-circle text-accent text-lg"></i>
-                <p>Кубики (◈) — это внутренняя расчетная единица. С их помощью вы оплачиваете только чистое время аренды рабочего места без переплат.</p>
-            </div>
-            
-            <div class="space-y-3">
-                <div class="flex justify-between items-center mb-1">
-                    <h3 class="text-md font-semibold text-white">Выбрать пакет кубиков</h3>
-                    <span class="text-xs text-gray-400">Выгода до 20%</span>
-                </div>
-                
-                <div class="w-full p-4 rounded-xl glass-effect flex justify-between items-center cursor-pointer border border-transparent hover:border-accent/20" onclick="purchaseCubes(50, 500)">
-                    <div>
-                        <p class="text-white font-medium text-sm">Пакет «Старт» — 50 ◈</p>
-                        <p class="text-gray-400 text-xs mt-0.5">Для разового тест-драйва</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-accent font-bold text-base">500 ₽</p>
-                        <p class="text-gray-500 text-[10px]">10 ₽ за кубик</p>
-                    </div>
-                </div>
-                
-                <div class="w-full p-4 rounded-xl glass-effect flex justify-between items-center cursor-pointer border border-accent/40 bg-accent/5" onclick="purchaseCubes(100, 900)">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <p class="text-white font-semibold text-sm">Пакет «Мастер» — 100 ◈</p>
-                            <span class="bg-accent text-dark text-[9px] px-1.5 py-0.5 rounded font-bold">ТОП</span>
-                        </div>
-                        <p class="text-gray-300 text-xs mt-0.5">Оптимально на неделю работы</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-accent font-bold text-base">900 ₽</p>
-                        <p class="text-gray-400 text-[10px]">9 ₽ за кубик</p>
-                    </div>
-                </div>
-                
-                <div class="w-full p-4 rounded-xl glass-effect flex justify-between items-center cursor-pointer border border-transparent hover:border-accent/20" onclick="purchaseCubes(300, 2400)">
-                    <div>
-                        <p class="text-white font-medium text-sm">Пакет «Профи» — 300 ◈</p>
-                        <p class="text-gray-400 text-xs mt-0.5">Максимальная экономия</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-accent font-bold text-base">2 400 ₽</p>
-                        <p class="text-green-400 font-medium text-[10px]">-20% • 8 ₽/кубик</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div id="locations-screen" class="screen p-5">
-            <div class="mb-5">
-                <h2 class="text-2xl font-bold gradient-accent">Доступные локации</h2>
-                <p class="text-gray-400 text-xs mt-1">Выбирайте удобный адрес и бронируйте за 2 клика</p>
-            </div>
-            
-            <div class="space-y-4" id="locations-list">
-                </div>
-        </div>
-
-        <div id="info-screen" class="screen p-5">
-            <div class="mb-5">
-                <h2 class="text-2xl font-bold gradient-accent">Как устроена аренда?</h2>
-                <p class="text-gray-400 text-xs mt-1">Всё прозрачно: никакой скрытой комиссии и переплат</p>
-            </div>
-
-            <div class="space-y-4 mb-6">
-                <div class="p-4 rounded-xl glass-effect flex gap-3.5 items-start">
-                    <div class="bg-accent/20 w-7 h-7 rounded-full flex items-center justify-center text-accent text-xs font-bold shrink-0 mt-0.5">1</div>
-                    <div>
-                        <h4 class="text-white font-semibold text-sm">Пополняете баланс кубиками</h4>
-                        <p class="text-gray-400 text-xs mt-1">Один кубик (◈) равен 10 рублям (или дешевле при оптовой покупке пакета).</p>
-                    </div>
-                </div>
-
-                <div class="p-4 rounded-xl glass-effect flex gap-3.5 items-start">
-                    <div class="bg-accent/20 w-7 h-7 rounded-full flex items-center justify-center text-accent text-xs font-bold shrink-0 mt-0.5">2</div>
-                    <div>
-                        <h4 class="text-white font-semibold text-sm">Выбираете время и место</h4>
-                        <p class="text-gray-400 text-xs mt-1">В разделе «Локации» выбираете нужный филиал. Списание идет строго за время аренды: от 1 до 2 кубиков в час.</p>
-                    </div>
-                </div>
-
-                <div class="p-4 rounded-xl glass-effect flex gap-3.5 items-start">
-                    <div class="bg-accent/20 w-7 h-7 rounded-full flex items-center justify-center text-accent text-xs font-bold shrink-0 mt-0.5">3</div>
-                    <div>
-                        <h4 class="text-white font-semibold text-sm">Пропуск по QR-коду</h4>
-                        <p class="text-gray-400 text-xs mt-1">После подтверждения в вашем «Профиле» сгенерируется QR-код. Покажите его на ресепшн коворкинга для автоматического открытия смарт-замка или верификации администратором.</p>
-                    </div>
-                </div>
-            </div>
-
-            <h3 class="text-md font-semibold text-white mb-3">Частые вопросы (FAQ)</h3>
-            <div class="space-y-2.5 text-xs">
-                <div class="p-3 rounded-lg bg-card/40 border border-white/5">
-                    <p class="text-accent font-medium mb-1">Можно ли отменить бронь?</p>
-                    <p class="text-gray-400">Да, бесплатная отмена бронирования доступна за 2 часа до начала сессии. Кубики вернутся на ваш баланс мгновенно.</p>
-                </div>
-                <div class="p-3 rounded-lg bg-card/40 border border-white/5">
-                    <p class="text-accent font-medium mb-1">Что входит в стоимость часа?</p>
-                    <p class="text-gray-400">Оборудованное рабочее место, базовые расходники (салфетки, воротнички), клининг, скоростной Wi-Fi и доступ к кофе-зоне для ваших клиентов.</p>
-                </div>
-            </div>
-        </div>
-        
-        <div id="profile-screen" class="screen p-5">
-            <div class="flex items-center justify-between mb-5">
-                <div>
-                    <h2 class="text-2xl font-bold gradient-accent">Ваш Профиль</h2>
-                    <p class="text-gray-400 text-xs mt-0.5">История сессий и цифровые пропуска</p>
-                </div>
-                <div class="glass-effect px-3.5 py-2 rounded-xl text-center min-w-[80px]">
-                    <p class="text-accent font-bold text-lg" id="profile-balance">150</p>
-                    <p class="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Баланс ◈</p>
-                </div>
-            </div>
-            
-            <h3 class="text-md font-semibold text-white mb-3">Активные цифровые пропуска</h3>
-            <div class="space-y-4" id="bookings-list">
-                </div>
-        </div>
-        
-        <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto glass-effect border-t border-accent/10 px-4 py-2.5 flex justify-around items-center z-50">
-            <div class="nav-item active text-center flex-1" onclick="switchScreen('home')">
-                <i class="fas fa-wallet text-lg"></i>
-                <p class="text-[10px] mt-1 font-medium">Баланс</p>
-            </div>
-            <div class="nav-item text-center flex-1" onclick="switchScreen('locations')">
-                <i class="fas fa-map-marked-alt text-lg"></i>
-                <p class="text-[10px] mt-1 font-medium">Локации</p>
-            </div>
-            <div class="nav-item text-center flex-1" onclick="switchScreen('info')">
-                <i class="fas fa-question-circle text-lg"></i>
-                <p class="text-[10px] mt-1 font-medium">Как работать</p>
-            </div>
-            <div class="nav-item text-center flex-1" onclick="switchScreen('profile')">
-                <i class="fas fa-id-card text-lg"></i>
-                <p class="text-[10px] mt-1 font-medium">Профиль</p>
-            </div>
-        </nav>
+  <div class="screen" id="screenHome">
+    <div class="home-header">
+      <div class="logo">KUBIX<span>beauty coworking</span></div>
+      <div class="notif-btn"><i class="ti ti-bell"></i><div class="notif-dot"></div></div>
     </div>
+    <div class="cube-scene">
+      <div class="glow-ring2"></div>
+      <div class="glow-ring"></div>
+      <div class="cube-wrap" onclick="toggleCube()" title="Нажмите для паузы">
+        <div class="cube" id="cube3d">
+          <div class="face face-front"></div>
+          <div class="face face-back"></div>
+          <div class="face face-left"></div>
+          <div class="face face-right"></div>
+          <div class="face face-top"></div>
+          <div class="face face-bottom"></div>
+        </div>
+      </div>
+      <div class="balance-label">Баланс кубиков</div>
+      <div class="balance-val" id="balanceDisplay">142</div>
+      <div class="balance-sub" id="balanceSub">≈ 71 час аренды</div>
+    </div>
+    <div class="section-title">Пополнить баланс</div>
+    <div class="packages">
+      <div class="pkg" onclick="buyPackage(50,299)">
+        <i class="ti ti-cube pkg-icon"></i>
+        <div class="pkg-amount">50</div>
+        <div class="pkg-unit">кубиков</div>
+        <div class="pkg-price">299 ₽</div>
+      </div>
+      <div class="pkg popular" onclick="buyPackage(100,499)">
+        <div class="pkg-badge">хит</div>
+        <i class="ti ti-diamonds pkg-icon"></i>
+        <div class="pkg-amount">100</div>
+        <div class="pkg-unit">кубиков</div>
+        <div class="pkg-price">499 ₽</div>
+      </div>
+      <div class="pkg" onclick="buyPackage(300,1190)">
+        <i class="ti ti-award pkg-icon"></i>
+        <div class="pkg-amount">300</div>
+        <div class="pkg-unit">кубиков</div>
+        <div class="pkg-price">1 190 ₽</div>
+      </div>
+    </div>
+    <div class="activity">
+      <div class="section-title" style="padding:0;margin-bottom:14px">Последние операции</div>
+      <div class="activity-list">
+        <div class="act-item">
+          <div class="act-icon"><i class="ti ti-scissors"></i></div>
+          <div class="act-info"><div class="act-name">Velvet Studio</div><div class="act-date">Сегодня, 14:00 — 2 ч</div></div>
+          <div class="act-amount act-minus">−4 ◈</div>
+        </div>
+        <div class="act-item">
+          <div class="act-icon"><i class="ti ti-shopping-bag"></i></div>
+          <div class="act-info"><div class="act-name">Пополнение × 100</div><div class="act-date">Вчера, 10:31</div></div>
+          <div class="act-amount act-plus">+100 ◈</div>
+        </div>
+        <div class="act-item">
+          <div class="act-icon"><i class="ti ti-sparkles"></i></div>
+          <div class="act-info"><div class="act-name">Lumière Space</div><div class="act-date">02 июн, 11:00 — 3 ч</div></div>
+          <div class="act-amount act-minus">−6 ◈</div>
+        </div>
+      </div>
+    </div>
+    <div style="height:20px"></div>
+  </div>
 
-    <script>
-        // Интеграция с Telegram WebApp
-        let tg = window.Telegram ? window.Telegram.WebApp : null;
-        if (tg) {
-            tg.expand(); // Расширяем приложение на весь экран телефона
-            tg.ready();
-            
-            // Если есть реальные данные от Telegram, подставляем их в хэдер
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                const user = tg.initDataUnsafe.user;
-                document.getElementById('user-name').textContent = `${user.first_name} ${user.last_name || ''}`.trim();
-                if (user.photo_url) {
-                    document.getElementById('user-avatar').innerHTML = `<img src="${user.photo_url}" class="w-full h-full rounded-full object-cover">`;
-                } else {
-                    document.getElementById('user-avatar').textContent = user.first_name.charAt(0).toUpperCase();
-                }
-            }
-        }
+  <div class="screen hidden" id="screenLocations">
+    <div class="loc-header">
+      <div><div class="page-title">Найди своё<br><em>место</em></div></div>
+      <div style="font-size:12px;color:var(--text3);text-align:right">Баланс<br><span style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);" id="balLoc">142 ◈</span></div>
+    </div>
+    <div class="filter-scroll">
+      <div class="filter-chip active" data-category="all" onclick="filterLoc(this)">Все</div>
+      <div class="filter-chip" data-category="nails" onclick="filterLoc(this)">Ногти</div>
+      <div class="filter-chip" data-category="hair" onclick="filterLoc(this)">Волосы</div>
+      <div class="filter-chip" data-category="lashes" onclick="filterLoc(this)">Ресницы</div>
+      <div class="filter-chip" data-category="makeup" onclick="filterLoc(this)">Макияж</div>
+    </div>
+    <div class="loc-list">
+      
+      <div class="loc-card" data-cat="nails,makeup">
+        <div class="loc-img-container">
+          <div class="status-indicator status-free">🟢 Свободно 4 места</div>
+          <div class="slider-arrow arrow-left" onclick="moveSlider(this, -1)"><i class="ti ti-chevron-left"></i></div>
+          <div class="slider-arrow arrow-right" onclick="moveSlider(this, 1)"><i class="ti ti-chevron-right"></i></div>
+          <div class="loc-slider">
+            <div class="loc-slide"><img src="images/velvet-1.webp" alt="Velvet Studio 1"></div>
+            <div class="loc-slide"><img src="images/velvet-2.webp" alt="Velvet Studio 2"></div>
+            <div class="loc-slide"><img src="images/velvet-3.webp" alt="Velvet Studio 3"></div>
+          </div>
+        </div>
+        <div class="loc-body">
+          <div class="loc-top">
+            <div class="loc-name">Velvet Studio</div>
+            <div class="loc-rating"><i class="ti ti-star-filled" style="font-size:12px"></i> 4.9</div>
+          </div>
+          <div class="loc-addr-row">
+            <div class="loc-addr"><i class="ti ti-map-pin" style="font-size:12px;color:var(--gold)"></i>ул. Большая Покровская, 15</div>
+            <div class="map-link-btn" onclick="openMap('ул. Большая Покровская, 15')" title="Маршрут"><i class="ti ti-map-2"></i></div>
+          </div>
+          <div class="loc-tags"><span class="tag">Ногти</span><span class="tag">Макияж</span><span class="tag">Пн–Вс 9–21</span></div>
+          
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <i class="ti ti-chevron-down"></i> Подробнее о пространстве
+          </button>
+          <div class="loc-details">
+            <div class="details-content">
+              <span><i class="ti ti-circle-check"></i> Столы со встроенными мощными вытяжками Verakso</span>
+              <span><i class="ti ti-circle-check"></i> Профессиональный видеосвет и кольцевые лампы 100W</span>
+              <span><i class="ti ti-circle-check"></i> Доступ к стерилизационной зоне (Сухожар ГП-10)</span>
+              <span><i class="ti ti-circle-check"></i> Зона ожидания: свежесваренный кофе / чай для клиентов</span>
+            </div>
+          </div>
 
-        // Внутреннее динамическое состояние MVP
-        let appState = {
-            balance: 150,
-            bookings: [],
-            currentScreen: 'home'
-        };
-        
-        // Список бьюти-локаций Нижнего Новгорода
-        const locations = [
-            {
-                id: 1,
-                name: "KUBIX Центр",
-                address: "ул. Большая Покровская, 47",
-                rating: 4.9,
-                price: 2, // стоимость в кубиках в час
-                image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400",
-                amenities: ["Премиум кресла", "LED-кольца 50вт", "Кофе-бар"]
-            },
-            {
-                id: 2,
-                name: "KUBIX Горьковская",
-                address: "ул. Горького, 152",
-                rating: 4.8,
-                price: 2,
-                image: "https://images.unsplash.com/photo-1487412912498-0447578fcca8?w=400",
-                amenities: ["VIP-мойки", "Стойка ресепшн", "Парковка"]
-            },
-            {
-                id: 3,
-                name: "KUBIX Стрелка",
-                address: "ул. Совнаркомовская, 20",
-                rating: 4.7,
-                price: 1,
-                image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400",
-                amenities: ["Панорамные окна", "Вытяжки для кератина", "Wi-Fi 200мб/с"]
-            }
-        ];
-        
-        // Инициализация красивого 3D куба (Three.js)
-        function initThreeCube() {
-            const container = document.getElementById('three-cube');
-            if(!container) return;
-            container.innerHTML = '';
-            
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            
-            renderer.setSize(220, 220);
-            renderer.setClearColor(0x000000, 0);
-            container.appendChild(renderer.domElement);
-            
-            const geometry = new THREE.BoxGeometry(2.1, 2.1, 2.1);
-            const material = new THREE.MeshPhongMaterial({
-                color: 0xc9a84c,
-                emissive: 0x111122,
-                shininess: 80,
-                transparent: true,
-                opacity: 0.85
-            });
-            
-            const cube = new THREE.Mesh(geometry, material);
-            const edges = new THREE.EdgesGeometry(geometry);
-            const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xe8d5a3, linewidth: 1.5 }));
-            cube.add(line);
-            scene.add(cube);
-            
-            const light1 = new THREE.PointLight(0xc9a84c, 1.2, 100);
-            light1.position.set(5, 5, 5);
-            scene.add(light1);
-            
-            const light2 = new THREE.PointLight(0x1a1a2e, 0.8, 100);
-            light2.position.set(-5, -5, -5);
-            scene.add(light2);
-            
-            scene.add(new THREE.AmbientLight(0x333333));
-            camera.position.z = 4.6;
-            
-            function animate() {
-                requestAnimationFrame(animate);
-                cube.rotation.x += 0.008;
-                cube.rotation.y += 0.008;
-                renderer.render(scene, camera);
-            }
-            animate();
-        }
-        
-        // Навигация между экранами приложения
-        function switchScreen(screen) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            
-            document.getElementById(`${screen}-screen`).classList.add('active');
-            
-            const clickedNavItem = document.querySelector(`[onclick="switchScreen('${screen}')"]`);
-            if(clickedNavItem) clickedNavItem.classList.add('active');
-            
-            appState.currentScreen = screen;
-            
-            if (screen === 'locations') renderLocations();
-            if (screen === 'profile') renderBookings();
-            if (screen === 'home') updateBalanceDisplay();
-        }
-        
-        // Пополнение баланса кубиков
-        function purchaseCubes(amount, price) {
-            if (confirm(`Пополнить счет на ${amount} ◈ за ${price} ₽?`)) {
-                if (tg && tg.showPopup) {
-                    tg.showPopup({
-                        title: 'Имитация платежа',
-                        message: `Производится транзакция на сумму ${price} ₽ через платежный шлюз Telegram.`,
-                        buttons: [{id: 'ok', type: 'default', text: 'Оплатить'}]
-                    }, (buttonId) => {
-                        processPayment(amount);
-                    });
-                } else {
-                    setTimeout(() => processPayment(amount), 400);
-                }
-            }
-        }
+          <div class="loc-footer">
+            <div class="loc-price"><div class="price-val">2</div><div class="price-unit">◈ / час</div></div>
+            <button class="book-btn" onclick="openBooking('Velvet Studio',2)">Забронировать</button>
+          </div>
+        </div>
+      </div>
 
-        function processPayment(amount) {
-            appState.balance += amount;
-            updateBalanceDisplay();
-            alert(`✅ Баланс успешно пополнен на +${amount} ◈`);
-        }
-        
-        // Синхронизация полей баланса во всем приложении
-        function updateBalanceDisplay() {
-            document.getElementById('balance-display').textContent = appState.balance;
-            document.getElementById('profile-balance').textContent = appState.balance;
-        }
-        
-        // Рендеринг списка локаций коворкингов
-        function renderLocations() {
-            const container = document.getElementById('locations-list');
-            if(!container) return;
-            container.innerHTML = '';
-            
-            // Динамический расчет актуальной даты для инпута (сегодня)
-            const todayStr = new Date().toISOString().split('T')[0];
-            
-            locations.forEach(location => {
-                const card = document.createElement('div');
-                card.className = 'glass-effect rounded-2xl overflow-hidden';
-                card.innerHTML = `
-                    <div class="relative h-36 bg-cover bg-center" style="background-image: url('${location.image}')">
-                        <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
-                        <div class="absolute bottom-3 left-3">
-                            <span class="bg-black/40 backdrop-blur-md text-accent px-2.5 py-0.5 rounded-full text-xs font-semibold">
-                                ⭐ ${location.rating}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold text-white mb-0.5">${location.name}</h3>
-                        <p class="text-gray-400 text-xs mb-3">📍 ${location.address}</p>
-                        <div class="flex flex-wrap gap-1.5 mb-4">
-                            ${location.amenities.map(a => `<span class="text-[10px] bg-accent/10 text-accent-light px-2 py-0.5 rounded-md">${a}</span>`).join('')}
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <p class="text-accent font-extrabold text-base">${location.price} ◈ / час</p>
-                                <p class="text-gray-500 text-[10px]">Тарифицируется поминутно</p>
-                            </div>
-                            <button class="btn-primary px-4 py-2 rounded-xl text-xs uppercase tracking-wider" onclick="toggleBookingForm(${location.id})">
-                                Забронировать
-                            </button>
-                        </div>
-                        
-                        <div id="booking-form-${location.id}" class="hidden mt-4 border-t border-accent/10 pt-4">
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="text-xs text-gray-400 font-medium">Выберите дату сессии:</label>
-                                    <input type="date" id="date-${location.id}" class="date-picker" min="${todayStr}" value="${todayStr}">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-400 font-medium">Время начала:</label>
-                                    <input type="time" id="time-${location.id}" class="time-picker" value="12:00">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-400 font-medium">Длительность аренды:</label>
-                                    <select id="duration-${location.id}" class="date-picker text-sm">
-                                        <option value="1">1 час — ${location.price} ◈</option>
-                                        <option value="2">2 часа — ${location.price * 2} ◈</option>
-                                        <option value="4">4 часа — ${location.price * 4} ◈</option>
-                                        <option value="8">8 часов (День) — ${location.price * 7} ◈ (Скидка!)</option>
-                                    </select>
-                                </div>
-                                <button class="btn-primary w-full mt-2 py-2.5 rounded-xl text-xs uppercase font-bold tracking-wider" onclick="confirmBooking(${location.id})">
-                                    Подтвердить и оплатить счетом ◈
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-        
-        function toggleBookingForm(locationId) {
-            const form = document.getElementById(`booking-form-${locationId}`);
-            if(form) form.classList.toggle('hidden');
-        }
-        
-        // Логика проведения бронирования сессии
-        function confirmBooking(locationId) {
-            const date = document.getElementById(`date-${locationId}`).value;
-            const time = document.getElementById(`time-${locationId}`).value;
-            const duration = parseInt(document.getElementById(`duration-${locationId}`).value);
-            const location = locations.find(l => l.id === locationId);
-            
-            if (!date || !time) {
-                alert('Пожалуйста, корректно укажите дату и время брони');
-                return;
-            }
-            
-            // Расчет скидки на полный день (8 часов)
-            let totalCubes = location.price * duration;
-            if (duration === 8) totalCubes = location.price * 7; 
-            
-            if (appState.balance < totalCubes) {
-                alert(`❌ Недостаточно кубиков!\nДля брони нужно: ${totalCubes} ◈\nВаш баланс: ${appState.balance} ◈\n\nПожалуйста, пополните баланс на главном экране.`);
-                switchScreen('home');
-                return;
-            }
-            
-            // Списываем кубики
-            appState.balance -= totalCubes;
-            updateBalanceDisplay();
-            
-            // Создаем объект активного бронирования
-            const newBooking = {
-                id: Date.now(),
-                locationName: location.name,
-                address: location.address,
-                date: date,
-                time: time,
-                duration: duration,
-                totalCubes: totalCubes,
-                status: 'Активен',
-                qrCode: `KBX-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`
-            };
-            
-            appState.bookings.unshift(newBooking); // Добавляем на первое место в массиве
-            
-            // Если открыто в Telegram, можно запустить легкую вибрацию смартфона на успешное действие
-            if (tg && tg.HapticFeedback) {
-                tg.HapticFeedback.notificationOccurred('success');
-            }
-            
-            alert(`🎉 Успешно забронировано!\nЦифровой пропуск-код сгенерирован и добавлен во вкладку «Профиль».`);
-            switchScreen('profile');
-        }
-        
-        // Генерация и вывод пропусков и QR кодов в профиле
-        function renderBookings() {
-            const container = document.getElementById('bookings-list');
-            if(!container) return;
-            
-            if (appState.bookings.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-10 glass-effect rounded-2xl p-4">
-                        <i class="fas fa-calendar-times text-4xl text-gray-600 mb-3"></i>
-                        <p class="text-gray-400 text-xs">У вас пока нет активных пропусков на аренду</p>
-                        <button class="btn-primary mt-4 px-5 py-2 rounded-xl text-xs uppercase font-bold" onclick="switchScreen('locations')">
-                            Найти рабочее место
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = '';
-            
-            appState.bookings.forEach(booking => {
-                const card = document.createElement('div');
-                card.className = 'glass-effect rounded-2xl p-4 border border-white/5 bg-card/20';
-                card.innerHTML = `
-                    <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <h3 class="text-base font-bold text-white">${booking.locationName}</h3>
-                            <p class="text-gray-400 text-[11px]">📍 ${booking.address}</p>
-                        </div>
-                        <span class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold px-2.5 py-0.5 rounded-full text-[10px]">
-                            ${booking.status}
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-y-2 gap-x-4 mb-4 text-xs border-y border-white/5 py-2.5">
-                        <div>
-                            <p class="text-gray-500 text-[10px] uppercase">Дата сессии</p>
-                            <p class="text-white font-medium mt-0.5">${booking.date}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-500 text-[10px] uppercase">Время (Начало)</p>
-                            <p class="text-white font-medium mt-0.5">${booking.time}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-500 text-[10px] uppercase">Длительность</p>
-                            <p class="text-white font-medium mt-0.5">${booking.duration} час(а)</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-500 text-[10px] uppercase">Списано со счета</p>
-                            <p class="text-accent font-bold mt-0.5">${booking.totalCubes} ◈</p>
-                        </div>
-                    </div>
-                    <div class="pt-1 text-center">
-                        <p class="text-gray-400 text-[11px] mb-2 font-medium">Электронный смарт-ключ доступа:</p>
-                        <div class="qr-code-container mx-auto" id="qr-${booking.id}"></div>
-                        <p class="text-gray-500 text-[9px] mt-2 tracking-wide uppercase">Покажите этот код администратору коворкинга</p>
-                    </div>
-                `;
-                container.appendChild(card);
-                
-                // Рендерим QR код библиотеки qrcode.js в созданный контейнер
-                setTimeout(() => {
-                    new QRCode(document.getElementById(`qr-${booking.id}`), {
-                        text: booking.qrCode,
-                        width: 110,
-                        height: 110,
-                        colorDark: "#0a0a0f",
-                        colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.M
-                    });
-                }, 50);
-            });
-        }
-        
-        // Запуск базового состояния приложения при старте
-        function initApp() {
-            initThreeCube();
-            updateBalanceDisplay();
-            
-            // Динамический расчет текущей даты для демонстрационного бронирования (чтобы был 2026 год, а не старый)
-            const demoDate = new Date();
-            demoDate.setDate(demoDate.getDate() + 1); // Завтрашний день
-            const demoDateStr = demoDate.toISOString().split('T')[0];
+      <div class="loc-card" data-cat="hair">
+        <div class="loc-img-container">
+          <div class="status-indicator status-free">🟢 Свободно 2 места</div>
+          <div class="slider-arrow arrow-left" onclick="moveSlider(this, -1)"><i class="ti ti-chevron-left"></i></div>
+          <div class="slider-arrow arrow-right" onclick="moveSlider(this, 1)"><i class="ti ti-chevron-right"></i></div>
+          <div class="loc-slider">
+            <div class="loc-slide"><img src="images/lumiere-1.webp" alt="Lumière Space 1"></div>
+            <div class="loc-slide"><img src="images/lumiere-2.webp" alt="Lumière Space 2"></div>
+          </div>
+        </div>
+        <div class="loc-body">
+          <div class="loc-top">
+            <div class="loc-name">Lumière Space</div>
+            <div class="loc-rating"><i class="ti ti-star-filled" style="font-size:12px"></i> 4.8</div>
+          </div>
+          <div class="loc-addr-row">
+            <div class="loc-addr"><i class="ti ti-map-pin" style="font-size:12px;color:var(--gold)"></i>пр. Ленина, 54, оф. 301</div>
+            <div class="map-link-btn" onclick="openMap('пр. Ленина, 54, оф. 301')" title="Маршрут"><i class="ti ti-map-2"></i></div>
+          </div>
+          <div class="loc-tags"><span class="tag">Волосы</span><span class="tag">Колорирование</span><span class="tag">Пн–Сб 8–22</span></div>
+          
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <i class="ti ti-chevron-down"></i> Подробнее о пространстве
+          </button>
+          <div class="loc-details">
+            <div class="details-content">
+              <span><i class="ti ti-circle-check"></i> Парикмахерские кресла премиум-класса с гидравликой</span>
+              <span><i class="ti ti-circle-check"></i> Профессиональные мойки с анатомическими раковинами</span>
+              <span><i class="ti ti-circle-check"></i> Специализированная мощная вытяжка для кератина/ботокса</span>
+              <span><i class="ti ti-circle-check"></i> Лаборатория для смешивания красителей с весами</span>
+            </div>
+          </div>
 
-            // Создаем красивый дефолтный активный пропуск для демонстрации интерфейса
-            appState.bookings.push({
-                id: 999111,
-                locationName: "KUBIX Центр",
-                address: "ул. Большая Покровская, 47",
-                date: demoDateStr,
-                time: "15:00",
-                duration: 2,
-                totalCubes: 4,
-                status: 'Активен',
-                qrCode: 'KUBIX-DEMO-PASS-2026'
-            });
-        }
-        
-        // Официальный старт скрипта
-        window.addEventListener('DOMContentLoaded', initApp);
-    </script>
+          <div class="loc-footer">
+            <div class="loc-price"><div class="price-val">3</div><div class="price-unit">◈ / час</div></div>
+            <button class="book-btn" onclick="openBooking('Lumière Space',3)">Забронировать</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="loc-card" data-cat="lashes">
+        <div class="loc-img-container">
+          <div class="status-indicator status-busy">🟡 Повышенный спрос</div>
+          <div class="slider-arrow arrow-left" onclick="moveSlider(this, -1)"><i class="ti ti-chevron-left"></i></div>
+          <div class="slider-arrow arrow-right" onclick="moveSlider(this, 1)"><i class="ti ti-chevron-right"></i></div>
+          <div class="loc-slider">
+            <div class="loc-slide"><img src="images/lash-1.webp" alt="Lash Atelier 1"></div>
+            <div class="loc-slide"><img src="images/lash-2.webp" alt="Lash Atelier 2"></div>
+          </div>
+        </div>
+        <div class="loc-body">
+          <div class="loc-top">
+            <div class="loc-name">Lash Atelier</div>
+            <div class="loc-rating"><i class="ti ti-star-filled" style="font-size:12px"></i> 5.0</div>
+          </div>
+          <div class="loc-addr-row">
+            <div class="loc-addr"><i class="ti ti-map-pin" style="font-size:12px;color:var(--gold)"></i>ул. Рождественская, 8</div>
+            <div class="map-link-btn" onclick="openMap('ул. Рождественская, 8')" title="Маршрут"><i class="ti ti-map-2"></i></div>
+          </div>
+          <div class="loc-tags"><span class="tag">Ресницы</span><span class="tag">Брови</span><span class="tag">Вт–Вс 10–20</span></div>
+          
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <i class="ti ti-chevron-down"></i> Подробнее о пространстве
+          </button>
+          <div class="loc-details">
+            <div class="details-content">
+              <span><i class="ti ti-circle-check"></i> Анатомические кушетки с эффектом памяти (Memory Foam)</span>
+              <span><i class="ti ti-circle-check"></i> Бестеневые профессиональные лампы Aura/Millennium</span>
+              <span><i class="ti ti-circle-check"></i> Регулируемые стулья мастеров для снижения нагрузки на спину</span>
+              <span><i class="ti ti-circle-check"></i> Локеры под ключ для хранения личных материалов мастеров</span>
+            </div>
+          </div>
+
+          <div class="loc-footer">
+            <div class="loc-price"><div class="price-val">2</div><div class="price-unit">◈ / час</div></div>
+            <button class="book-btn" onclick="openBooking('Lash Atelier',2)">Забронировать</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="loc-card" data-cat="makeup">
+        <div class="loc-img-container">
+          <div class="status-indicator status-free">🟢 Свободно 3 места</div>
+          <div class="slider-arrow arrow-left" onclick="moveSlider(this, -1)"><i class="ti ti-chevron-left"></i></div>
+          <div class="slider-arrow arrow-right" onclick="moveSlider(this, 1)"><i class="ti ti-chevron-right"></i></div>
+          <div class="loc-slider">
+            <div class="loc-slide"><img src="images/vanity-1.webp" alt="Gold Vanity 1"></div>
+            <div class="loc-slide"><img src="images/vanity-2.webp" alt="Gold Vanity 2"></div>
+          </div>
+        </div>
+        <div class="loc-body">
+          <div class="loc-top">
+            <div class="loc-name">Gold Vanity</div>
+            <div class="loc-rating"><i class="ti ti-star-filled" style="font-size:12px"></i> 4.7</div>
+          </div>
+          <div class="loc-addr-row">
+            <div class="loc-addr"><i class="ti ti-map-pin" style="font-size:12px;color:var(--gold)"></i>ул. М. Малиновского, 3</div>
+            <div class="map-link-btn" onclick="openMap('ул. М. Малиновского, 3')" title="Маршрут"><i class="ti ti-map-2"></i></div>
+          </div>
+          <div class="loc-tags"><span class="tag">Макияж</span><span class="tag">Фотосъёмка</span><span class="tag">Ежедневно 9–22</span></div>
+          
+          <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <i class="ti ti-chevron-down"></i> Подробнее о пространстве
+          </button>
+          <div class="loc-details">
+            <div class="details-content">
+              <span><i class="ti ti-circle-check"></i> Гримерные зеркала с идеальным спектром дневного света</span>
+              <span><i class="ti ti-circle-check"></i> Высокие барные стулья для удобства работы визажиста</span>
+              <span><i class="ti ti-circle-check"></i> Профессиональная фотозона с тканевыми и бумажными фонами</span>
+              <span><i class="ti ti-circle-check"></i> Ассистент на площадке для помощи со светом перед съемкой</span>
+            </div>
+          </div>
+
+          <div class="loc-footer">
+            <div class="loc-price"><div class="price-val">4</div><div class="price-unit">◈ / час</div></div>
+            <button class="book-btn" onclick="openBooking('Gold Vanity',4)">Забронировать</button>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    <div style="height:20px"></div>
+
+    <div class="modal-overlay" id="bookingModal" onclick="closeModal(event)">
+      <div class="modal-sheet" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="modal-title" id="modalTitle">Velvet Studio</div>
+        <div class="modal-sub" id="modalSub">2 кубика / час</div>
+        <div class="field">
+          <div class="field-label">Выберите дату</div>
+          <div class="date-grid" id="dateGrid"></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Время начала</div>
+          <div class="time-grid" id="timeGrid"></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Длительность</div>
+          <div class="dur-row">
+            <button class="dur-btn sel" onclick="setDur(this,1)">1 ч</button>
+            <button class="dur-btn" onclick="setDur(this,2)">2 ч</button>
+            <button class="dur-btn" onclick="setDur(this,3)">3 ч</button>
+            <button class="dur-btn" onclick="setDur(this,4)">4 ч</button>
+          </div>
+        </div>
+        <div class="cost-row">
+          <div class="cost-label">Итого к списанию</div>
+          <div class="cost-val" id="costVal">2 ◈</div>
+        </div>
+        <button class="confirm-btn" onclick="confirmBooking()">Подтвердить бронирование</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen hidden" id="screenProfile">
+    <div class="prof-header">
+      <div class="avatar-row">
+        <div class="avatar">АН</div>
+        <div>
+          <div class="prof-name">Анна Николаева</div>
+          <div class="prof-type">мастер · нейл-арт</div>
+        </div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-val" id="statBal">142</div><div class="stat-lbl">кубиков</div></div>
+      <div class="stat-card"><div class="stat-val" id="statBook">2</div><div class="stat-lbl">броней</div></div>
+      <div class="stat-card"><div class="stat-val">18</div><div class="stat-lbl">часов</div></div>
+    </div>
+    <div style="padding:0 24px;margin-bottom:14px">
+      <div class="section-title" style="padding:0">Мои бронирования</div>
+    </div>
+    <div class="bookings-list" id="bookingsList">
+      <div class="booking-card">
+        <div class="booking-top">
+          <div><div class="booking-place">Velvet Studio</div><div class="booking-addr">ул. Большая Покровская, 15</div></div>
+          <div class="status-badge status-active">активно</div>
+        </div>
+        <div class="booking-mid">
+          <div class="bk-info"><i class="ti ti-calendar"></i>4 июня 2025</div>
+          <div class="bk-info"><i class="ti ti-clock"></i>14:00 — 16:00</div>
+          <div class="bk-info"><i class="ti ti-cube"></i>4 ◈</div>
+        </div>
+        <div class="booking-qr">
+          <div class="qr-box">
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="width:64px;height:64px">
+              <rect width="64" height="64" fill="#111113"/>
+              <rect x="4" y="4" width="24" height="24" rx="2" fill="none" stroke="#C9A96E" stroke-width="1.5"/>
+              <rect x="8" y="8" width="16" height="16" fill="#C9A96E" opacity=".7"/>
+              <rect x="36" y="4" width="24" height="24" rx="2" fill="none" stroke="#C9A96E" stroke-width="1.5"/>
+              <rect x="40" y="8" width="16" height="16" fill="#C9A96E" opacity=".7"/>
+              <rect x="4" y="36" width="24" height="24" rx="2" fill="none" stroke="#C9A96E" stroke-width="1.5"/>
+              <rect x="8" y="40" width="16" height="16" fill="#C9A96E" opacity=".7"/>
+              <rect x="36" y="36" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+              <rect x="42" y="36" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+              <rect x="48" y="36" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+              <rect x="54" y="36" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+              <rect x="36" y="42" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+              <rect x="48" y="42" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+              <rect x="36" y="48" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+              <rect x="42" y="48" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+              <rect x="54" y="48" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+              <rect x="42" y="54" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+              <rect x="48" y="54" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+            </svg>
+          </div>
+          <div><div class="qr-desc">Покажите QR-код администратору при входе</div><div class="qr-code-num">KBX-240604-001</div></div>
+        </div>
+      </div>
+      <div id="dynamicBookings"></div>
+      <div class="booking-card">
+        <div class="booking-top">
+          <div><div class="booking-place">Lumière Space</div><div class="booking-addr">пр. Ленина, 54</div></div>
+          <div class="status-badge status-done">завершено</div>
+        </div>
+        <div class="booking-mid">
+          <div class="bk-info"><i class="ti ti-calendar"></i>2 июня 2025</div>
+          <div class="bk-info"><i class="ti ti-clock"></i>11:00 — 14:00</div>
+          <div class="bk-info"><i class="ti ti-cube"></i>9 ◈</div>
+        </div>
+        <div class="booking-qr">
+          <div class="qr-box" style="opacity:.3">
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="width:64px;height:64px">
+              <rect width="64" height="64" fill="#111113"/>
+              <rect x="4" y="4" width="24" height="24" rx="2" fill="none" stroke="#5A5448" stroke-width="1.5"/>
+              <rect x="8" y="8" width="16" height="16" fill="#5A5448"/>
+              <rect x="36" y="4" width="24" height="24" rx="2" fill="none" stroke="#5A5448" stroke-width="1.5"/>
+              <rect x="40" y="8" width="16" height="16" fill="#5A5448"/>
+              <rect x="4" y="36" width="24" height="24" rx="2" fill="none" stroke="#5A5448" stroke-width="1.5"/>
+              <rect x="8" y="40" width="16" height="16" fill="#5A5448"/>
+            </svg>
+          </div>
+          <div><div class="qr-desc" style="color:#3A3832">Бронирование завершено</div><div class="qr-code-num" style="color:#5A5448">KBX-240602-002</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+
+  <nav class="nav">
+    <button class="nav-btn active" onclick="goTo('Home',this)"><i class="ti ti-home"></i><span>Главная</span></button>
+    <button class="nav-btn" onclick="goTo('Locations',this)"><i class="ti ti-map-pin"></i><span>Локации</span></button>
+    <button class="nav-btn" onclick="goTo('Profile',this)"><i class="ti ti-user"></i><span>Профиль</span></button>
+  </nav>
+</div>
+
+<script>
+let balance = 142;
+let selectedDate = null, selectedTime = null, selectedDur = 1;
+let currentPlaceName = '', currentPricePerHour = 2;
+let newBookings = [];
+const days = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+const months = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+
+function goTo(name, btn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById('screen' + name).classList.remove('hidden');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (name === 'Locations') document.getElementById('balLoc').textContent = balance + ' ◈';
+  if (name === 'Profile') {
+    document.getElementById('statBal').textContent = balance;
+    document.getElementById('statBook').textContent = 2 + newBookings.length;
+    renderNewBookings();
+  }
+}
+
+function toggleCube() {
+  const c = document.getElementById('cube3d');
+  c.classList.toggle('paused');
+}
+
+function buyPackage(amount, price) {
+  balance += amount;
+  document.getElementById('balanceDisplay').textContent = balance;
+  document.getElementById('balanceSub').textContent = '≈ ' + Math.floor(balance / 2) + ' час аренды';
+  showToast('+' + amount + ' кубиков добавлено ◈');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function openBooking(place, price) {
+  currentPlaceName = place;
+  currentPricePerHour = price;
+  selectedDate = null; selectedTime = null; selectedDur = 1;
+  document.getElementById('modalTitle').textContent = place;
+  document.getElementById('modalSub').textContent = price + ' кубика / час';
+  buildDateGrid(); buildTimeGrid();
+  document.querySelectorAll('.dur-btn').forEach((b, i) => b.classList.toggle('sel', i === 0));
+  updateCost();
+  document.getElementById('bookingModal').classList.add('open');
+}
+
+function closeModal(e) {
+  document.getElementById('bookingModal').classList.remove('open');
+}
+
+function buildDateGrid() {
+  const g = document.getElementById('dateGrid');
+  g.innerHTML = '';
+  const today = new Date();
+  for (let i = 0; i < 5; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    const el = document.createElement('div');
+    el.className = 'date-chip' + (i === 0 ? ' sel' : '');
+    el.innerHTML = `<div class="dc-day">${i === 0 ? 'сег' : days[d.getDay()]}</div><div class="dc-num">${d.getDate()}</div>`;
+    el.dataset.date = d.getDate() + ' ' + months[d.getMonth()];
+    el.onclick = () => {
+      document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('sel'));
+      el.classList.add('sel');
+      selectedDate = el.dataset.date;
+    };
+    if (i === 0) selectedDate = el.dataset.date;
+    g.appendChild(el);
+  }
+}
+
+function buildTimeGrid() {
+  const g = document.getElementById('timeGrid');
+  g.innerHTML = '';
+  ['9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00'].forEach(t => {
+    const el = document.createElement('div');
+    el.className = 'time-chip';
+    el.textContent = t;
+    el.onclick = () => {
+      document.querySelectorAll('.time-chip').forEach(c => c.classList.remove('sel'));
+      el.classList.add('sel');
+      selectedTime = t;
+      updateCost();
+    };
+    g.appendChild(el);
+  });
+}
+
+function setDur(btn, hours) {
+  document.querySelectorAll('.dur-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  selectedDur = hours;
+  updateCost();
+}
+
+function updateCost() {
+  document.getElementById('costVal').textContent = (currentPricePerHour * selectedDur) + ' ◈';
+}
+
+function confirmBooking() {
+  if (!selectedTime) { showToast('Выберите время'); return; }
+  const cost = currentPricePerHour * selectedDur;
+  if (balance < cost) { showToast('Недостаточно кубиков'); return; }
+  balance -= cost;
+  document.getElementById('balanceDisplay').textContent = balance;
+  document.getElementById('balanceSub').textContent = '≈ ' + Math.floor(balance / 2) + ' час аренды';
+  const endH = parseInt(selectedTime) + selectedDur;
+  newBookings.push({ place: currentPlaceName, date: selectedDate + ' 2025', start: selectedTime, end: endH + ':00', cost });
+  document.getElementById('bookingModal').classList.remove('open');
+  document.getElementById('successText').textContent = `Место в ${currentPlaceName} на ${selectedDate} в ${selectedTime}. QR-код доступен в профиле.`;
+  document.getElementById('successOverlay').classList.add('show');
+}
+
+function closeSuccess() {
+  document.getElementById('successOverlay').classList.remove('show');
+  document.querySelectorAll('.nav-btn')[2].click();
+}
+
+function renderNewBookings() {
+  const el = document.getElementById('dynamicBookings');
+  if (!newBookings.length) { el.innerHTML = ''; return; }
+  const b = newBookings[newBookings.length - 1];
+  const id = 'KBX-' + (Math.floor(Math.random() * 900000) + 100000);
+  el.innerHTML = `
+    <div class="booking-card" style="margin-bottom:0">
+      <div class="booking-top">
+        <div><div class="booking-place">${b.place}</div><div class="booking-addr">Нижний Новгород</div></div>
+        <div class="status-badge status-active">активно</div>
+      </div>
+      <div class="booking-mid">
+        <div class="bk-info"><i class="ti ti-calendar"></i>${b.date}</div>
+        <div class="bk-info"><i class="ti ti-clock"></i>${b.start} — ${b.end}</div>
+        <div class="bk-info"><i class="ti ti-cube"></i>${b.cost} ◈</div>
+      </div>
+      <div class="booking-qr">
+        <div class="qr-box">
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" style="width:64px;height:64px">
+            <rect width="64" height="64" fill="#111113"/>
+            <rect x="4" y="4" width="24" height="24" rx="2" fill="none" stroke="#C9A96E" stroke-width="1.5"/>
+            <rect x="8" y="8" width="16" height="16" fill="#C9A96E" opacity=".7"/>
+            <rect x="36" y="4" width="24" height="24" rx="2" fill="none" stroke="#C9A96E" stroke-width="1.5"/>
+            <rect x="40" y="8" width="16" height="16" fill="#C9A96E" opacity=".7"/>
+            <rect x="4" y="36" width="24" height="24" rx="2" fill="none" stroke="#C9A96E" stroke-width="1.5"/>
+            <rect x="8" y="40" width="16" height="16" fill="#C9A96E" opacity=".7"/>
+            <rect x="36" y="42" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+            <rect x="48" y="36" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+            <rect x="54" y="42" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+            <rect x="42" y="54" width="4" height="4" fill="#C9A96E" opacity=".8"/>
+          </svg>
+        </div>
+        <div><div class="qr-desc">Покажите QR-код администратору при входе</div><div class="qr-code-num">${id}</div></div>
+      </div>
+    </div>`;
+}
+
+/* NEW DEVELOPMENTS LOGIC */
+
+// 1. Споты и Категории Фильтрации
+function filterLoc(chip) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  
+  const selectedCategory = chip.getAttribute('data-category');
+  const cards = document.querySelectorAll('.loc-card');
+  
+  cards.forEach(card => {
+    if (selectedCategory === 'all') {
+      card.classList.remove('hidden');
+    } else {
+      const cardCategories = card.getAttribute('data-cat').split(',');
+      if (cardCategories.includes(selectedCategory)) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    }
+  });
+}
+
+// 2. Фотогалерея (Слайдер)
+function moveSlider(btn, direction) {
+  event.stopPropagation(); // Отменяем всплытие, чтобы не срабатывали клики по карточке
+  const container = btn.parentElement.querySelector('.loc-slider');
+  const width = container.offsetWidth;
+  container.scrollBy({ left: width * direction, behavior: 'smooth' });
+}
+
+// 3. Маршруты и Навигатор
+function openMap(address) {
+  event.stopPropagation();
+  // Кодируем адрес для передачи в гео-интерфейсы
+  const url = `https://maps.google.com/?q=${encodeURIComponent(address)}`;
+  window.open(url, '_blank');
+}
+
+// 4. Аккордеон (Детализация спота)
+function toggleAccordion(btn) {
+  btn.classList.toggle('open');
+  const panel = btn.nextElementSibling;
+  if (panel.style.maxHeight) {
+    panel.style.maxHeight = null;
+  } else {
+    panel.style.maxHeight = panel.scrollHeight + "px";
+  }
+}
+</script>
 </body>
 </html>
