@@ -8,17 +8,15 @@
     <meta name="theme-color" content="#0a0a0f">
     <title>KUBIX - Бьюти-коворкинг</title>
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
-    <!-- QR Code Generator -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <script>
         tailwind.config = {
@@ -83,28 +81,16 @@
             box-shadow: 0 2px 8px rgba(201, 168, 76, 0.2);
         }
         
-        .btn-secondary {
-            background: rgba(201, 168, 76, 0.1);
-            border: 1px solid rgba(201, 168, 76, 0.3);
-            color: #c9a84c;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-secondary:active {
-            background: rgba(201, 168, 76, 0.2);
-            transform: scale(0.95);
-        }
-        
         .cube-container {
-            width: 250px;
-            height: 250px;
+            width: 220px;
+            height: 220px;
             margin: 0 auto;
             perspective: 1000px;
         }
         
         .screen {
             display: none;
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.4s ease;
         }
         
         .screen.active {
@@ -112,13 +98,13 @@
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
         }
         
         .floating {
@@ -127,7 +113,7 @@
         
         .qr-code-container {
             background: white;
-            padding: 15px;
+            padding: 12px;
             border-radius: 12px;
             display: inline-block;
         }
@@ -136,16 +122,10 @@
             background: rgba(26, 26, 46, 0.8);
             border: 1px solid rgba(201, 168, 76, 0.3);
             color: white;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 10px;
             width: 100%;
-            margin-top: 8px;
-        }
-        
-        .date-picker:focus, .time-picker:focus {
-            outline: none;
-            border-color: #c9a84c;
-            box-shadow: 0 0 15px rgba(201, 168, 76, 0.2);
+            margin-top: 6px;
         }
         
         input[type="date"]::-webkit-calendar-picker-indicator,
@@ -156,141 +136,221 @@
         .nav-item {
             transition: all 0.3s ease;
             cursor: pointer;
+            color: #888899;
         }
         
         .nav-item.active {
             color: #c9a84c;
         }
-        
-        .nav-item.active i {
-            text-shadow: 0 0 20px rgba(201, 168, 76, 0.5);
-        }
     </style>
 </head>
 <body>
-    <div id="app" class="min-h-screen max-w-md mx-auto relative pb-20">
+    <div id="app" class="min-h-screen max-w-md mx-auto relative pb-24">
         
-        <!-- Экран 1: Главная -->
-        <div id="home-screen" class="screen active p-6">
-            <div class="text-center mb-8">
-                <h1 class="text-4xl font-bold gradient-accent mb-2">KUBIX</h1>
-                <p class="text-gray-400 text-sm">Бьюти-коворкинг премиум-класса</p>
-            </div>
-            
-            <!-- 3D Куб с балансом -->
-            <div class="cube-container mb-8 floating" id="cube-container">
-                <div id="three-cube" style="width: 100%; height: 100%;"></div>
-                <div class="text-center -mt-6 relative z-10">
-                    <p class="text-gray-400 text-xs mb-1">Ваш баланс</p>
-                    <p class="text-3xl font-bold gradient-accent" id="balance-display">150</p>
-                    <p class="text-gray-500 text-xs">кубиков</p>
+        <div class="p-4 flex justify-between items-center border-b border-accent/10 glass-effect sticky top-0 z-40">
+            <div class="flex items-center gap-3">
+                <div id="user-avatar" class="w-9 height-9 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-accent text-sm font-bold">
+                    <i class="fas fa-user-cosmetic"></i>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-400">Приветствуем,</p>
+                    <p id="user-name" class="text-sm font-semibold text-white">Бьюти-Мастер</p>
                 </div>
             </div>
+            <div class="text-right">
+                <span class="text-xs bg-accent/10 border border-accent/20 text-accent px-2.5 py-1 rounded-full font-medium">
+                    1 ◈ = 10 ₽
+                </span>
+            </div>
+        </div>
+
+        <div id="home-screen" class="screen active p-5">
+            <div class="cube-container mb-4 floating" id="cube-container">
+                <div id="three-cube" style="width: 100%; height: 100%;"></div>
+                <div class="text-center -mt-8 relative z-10">
+                    <p class="text-gray-400 text-xs mb-0.5">Баланс личного счета</p>
+                    <p class="text-4xl font-extrabold gradient-accent" id="balance-display">150</p>
+                    <p class="text-gray-400 text-xs mt-0.5">кубиков (◈)</p>
+                </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl glass-effect mb-6 flex gap-3 items-center text-xs text-gray-300">
+                <i class="fas fa-info-circle text-accent text-lg"></i>
+                <p>Кубики (◈) — это внутренняя расчетная единица. С их помощью вы оплачиваете только чистое время аренды рабочего места без переплат.</p>
+            </div>
             
-            <!-- Пакеты кубиков -->
             <div class="space-y-3">
-                <h3 class="text-lg font-semibold text-white mb-4">Пополнить баланс</h3>
+                <div class="flex justify-between items-center mb-1">
+                    <h3 class="text-md font-semibold text-white">Выбрать пакет кубиков</h3>
+                    <span class="text-xs text-gray-400">Выгода до 20%</span>
+                </div>
                 
-                <button class="w-full p-4 rounded-2xl glass-effect flex justify-between items-center" onclick="purchaseCubes(50, 500)">
+                <div class="w-full p-4 rounded-xl glass-effect flex justify-between items-center cursor-pointer border border-transparent hover:border-accent/20" onclick="purchaseCubes(50, 500)">
                     <div>
-                        <p class="text-white font-medium">50 кубиков</p>
-                        <p class="text-gray-400 text-xs">Идеально для старта</p>
+                        <p class="text-white font-medium text-sm">Пакет «Старт» — 50 ◈</p>
+                        <p class="text-gray-400 text-xs mt-0.5">Для разового тест-драйва</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-accent font-bold">500 ₽</p>
-                        <p class="text-gray-500 text-xs">10 ₽/кубик</p>
+                        <p class="text-accent font-bold text-base">500 ₽</p>
+                        <p class="text-gray-500 text-[10px]">10 ₽ за кубик</p>
                     </div>
-                </button>
+                </div>
                 
-                <button class="w-full p-4 rounded-2xl glass-effect flex justify-between items-center border border-accent/30" onclick="purchaseCubes(100, 900)">
+                <div class="w-full p-4 rounded-xl glass-effect flex justify-between items-center cursor-pointer border border-accent/40 bg-accent/5" onclick="purchaseCubes(100, 900)">
                     <div>
-                        <p class="text-white font-medium">100 кубиков</p>
-                        <p class="text-gray-400 text-xs">Популярный выбор</p>
+                        <div class="flex items-center gap-2">
+                            <p class="text-white font-semibold text-sm">Пакет «Мастер» — 100 ◈</p>
+                            <span class="bg-accent text-dark text-[9px] px-1.5 py-0.5 rounded font-bold">ТОП</span>
+                        </div>
+                        <p class="text-gray-300 text-xs mt-0.5">Оптимально на неделю работы</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-accent font-bold">900 ₽</p>
-                        <p class="text-gray-500 text-xs">9 ₽/кубик</p>
+                        <p class="text-accent font-bold text-base">900 ₽</p>
+                        <p class="text-gray-400 text-[10px]">9 ₽ за кубик</p>
                     </div>
-                </button>
+                </div>
                 
-                <button class="w-full p-4 rounded-2xl glass-effect flex justify-between items-center" onclick="purchaseCubes(300, 2400)">
+                <div class="w-full p-4 rounded-xl glass-effect flex justify-between items-center cursor-pointer border border-transparent hover:border-accent/20" onclick="purchaseCubes(300, 2400)">
                     <div>
-                        <p class="text-white font-medium">300 кубиков</p>
-                        <p class="text-gray-400 text-xs">Максимальная выгода</p>
+                        <p class="text-white font-medium text-sm">Пакет «Профи» — 300 ◈</p>
+                        <p class="text-gray-400 text-xs mt-0.5">Максимальная экономия</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-accent font-bold">2 400 ₽</p>
-                        <p class="text-gray-500 text-xs">8 ₽/кубик</p>
-                        <span class="inline-block bg-accent/20 text-accent text-xs px-2 py-1 rounded-full mt-1">-20%</span>
+                        <p class="text-accent font-bold text-base">2 400 ₽</p>
+                        <p class="text-green-400 font-medium text-[10px]">-20% • 8 ₽/кубик</p>
                     </div>
-                </button>
+                </div>
             </div>
         </div>
         
-        <!-- Экран 2: Локации -->
-        <div id="locations-screen" class="screen p-6">
-            <div class="text-center mb-6">
-                <h2 class="text-3xl font-bold gradient-accent">Локации</h2>
-                <p class="text-gray-400 text-sm mt-2">Бьюти-коворкинги Нижнего Новгорода</p>
+        <div id="locations-screen" class="screen p-5">
+            <div class="mb-5">
+                <h2 class="text-2xl font-bold gradient-accent">Доступные локации</h2>
+                <p class="text-gray-400 text-xs mt-1">Выбирайте удобный адрес и бронируйте за 2 клика</p>
             </div>
             
             <div class="space-y-4" id="locations-list">
-                <!-- Локации будут добавляться динамически -->
+                </div>
+        </div>
+
+        <div id="info-screen" class="screen p-5">
+            <div class="mb-5">
+                <h2 class="text-2xl font-bold gradient-accent">Как устроена аренда?</h2>
+                <p class="text-gray-400 text-xs mt-1">Всё прозрачно: никакой скрытой комиссии и переплат</p>
+            </div>
+
+            <div class="space-y-4 mb-6">
+                <div class="p-4 rounded-xl glass-effect flex gap-3.5 items-start">
+                    <div class="bg-accent/20 w-7 h-7 rounded-full flex items-center justify-center text-accent text-xs font-bold shrink-0 mt-0.5">1</div>
+                    <div>
+                        <h4 class="text-white font-semibold text-sm">Пополняете баланс кубиками</h4>
+                        <p class="text-gray-400 text-xs mt-1">Один кубик (◈) равен 10 рублям (или дешевле при оптовой покупке пакета).</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl glass-effect flex gap-3.5 items-start">
+                    <div class="bg-accent/20 w-7 h-7 rounded-full flex items-center justify-center text-accent text-xs font-bold shrink-0 mt-0.5">2</div>
+                    <div>
+                        <h4 class="text-white font-semibold text-sm">Выбираете время и место</h4>
+                        <p class="text-gray-400 text-xs mt-1">В разделе «Локации» выбираете нужный филиал. Списание идет строго за время аренды: от 1 до 2 кубиков в час.</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl glass-effect flex gap-3.5 items-start">
+                    <div class="bg-accent/20 w-7 h-7 rounded-full flex items-center justify-center text-accent text-xs font-bold shrink-0 mt-0.5">3</div>
+                    <div>
+                        <h4 class="text-white font-semibold text-sm">Пропуск по QR-коду</h4>
+                        <p class="text-gray-400 text-xs mt-1">После подтверждения в вашем «Профиле» сгенерируется QR-код. Покажите его на ресепшн коворкинга для автоматического открытия смарт-замка или верификации администратором.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-md font-semibold text-white mb-3">Частые вопросы (FAQ)</h3>
+            <div class="space-y-2.5 text-xs">
+                <div class="p-3 rounded-lg bg-card/40 border border-white/5">
+                    <p class="text-accent font-medium mb-1">Можно ли отменить бронь?</p>
+                    <p class="text-gray-400">Да, бесплатная отмена бронирования доступна за 2 часа до начала сессии. Кубики вернутся на ваш баланс мгновенно.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-card/40 border border-white/5">
+                    <p class="text-accent font-medium mb-1">Что входит в стоимость часа?</p>
+                    <p class="text-gray-400">Оборудованное рабочее место, базовые расходники (салфетки, воротнички), клининг, скоростной Wi-Fi и доступ к кофе-зоне для ваших клиентов.</p>
+                </div>
             </div>
         </div>
         
-        <!-- Экран 3: Профиль -->
-        <div id="profile-screen" class="screen p-6">
-            <div class="text-center mb-6">
-                <h2 class="text-3xl font-bold gradient-accent">Профиль</h2>
-                <div class="mt-4 glass-effect p-4 rounded-2xl inline-block">
-                    <p class="text-gray-400 text-sm">Текущий баланс</p>
-                    <p class="text-3xl font-bold gradient-accent" id="profile-balance">150</p>
-                    <p class="text-gray-500 text-xs">кубиков</p>
+        <div id="profile-screen" class="screen p-5">
+            <div class="flex items-center justify-between mb-5">
+                <div>
+                    <h2 class="text-2xl font-bold gradient-accent">Ваш Профиль</h2>
+                    <p class="text-gray-400 text-xs mt-0.5">История сессий и цифровые пропуска</p>
+                </div>
+                <div class="glass-effect px-3.5 py-2 rounded-xl text-center min-w-[80px]">
+                    <p class="text-accent font-bold text-lg" id="profile-balance">150</p>
+                    <p class="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Баланс ◈</p>
                 </div>
             </div>
             
-            <h3 class="text-xl font-semibold text-white mb-4">Мои бронирования</h3>
+            <h3 class="text-md font-semibold text-white mb-3">Активные цифровые пропуска</h3>
             <div class="space-y-4" id="bookings-list">
-                <!-- Бронирования будут добавляться динамически -->
-            </div>
+                </div>
         </div>
         
-        <!-- Навигация -->
-        <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto glass-effect border-t border-accent/10 px-6 py-3 flex justify-around items-center z-50">
-            <div class="nav-item active text-center" onclick="switchScreen('home')">
-                <i class="fas fa-cube text-xl"></i>
-                <p class="text-xs mt-1">Главная</p>
+        <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto glass-effect border-t border-accent/10 px-4 py-2.5 flex justify-around items-center z-50">
+            <div class="nav-item active text-center flex-1" onclick="switchScreen('home')">
+                <i class="fas fa-wallet text-lg"></i>
+                <p class="text-[10px] mt-1 font-medium">Баланс</p>
             </div>
-            <div class="nav-item text-center" onclick="switchScreen('locations')">
-                <i class="fas fa-map-marker-alt text-xl"></i>
-                <p class="text-xs mt-1">Локации</p>
+            <div class="nav-item text-center flex-1" onclick="switchScreen('locations')">
+                <i class="fas fa-map-marked-alt text-lg"></i>
+                <p class="text-[10px] mt-1 font-medium">Локации</p>
             </div>
-            <div class="nav-item text-center" onclick="switchScreen('profile')">
-                <i class="fas fa-user text-xl"></i>
-                <p class="text-xs mt-1">Профиль</p>
+            <div class="nav-item text-center flex-1" onclick="switchScreen('info')">
+                <i class="fas fa-question-circle text-lg"></i>
+                <p class="text-[10px] mt-1 font-medium">Как работать</p>
+            </div>
+            <div class="nav-item text-center flex-1" onclick="switchScreen('profile')">
+                <i class="fas fa-id-card text-lg"></i>
+                <p class="text-[10px] mt-1 font-medium">Профиль</p>
             </div>
         </nav>
     </div>
 
     <script>
-        // Состояние приложения
+        // Интеграция с Telegram WebApp
+        let tg = window.Telegram ? window.Telegram.WebApp : null;
+        if (tg) {
+            tg.expand(); // Расширяем приложение на весь экран телефона
+            tg.ready();
+            
+            // Если есть реальные данные от Telegram, подставляем их в хэдер
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const user = tg.initDataUnsafe.user;
+                document.getElementById('user-name').textContent = `${user.first_name} ${user.last_name || ''}`.trim();
+                if (user.photo_url) {
+                    document.getElementById('user-avatar').innerHTML = `<img src="${user.photo_url}" class="w-full h-full rounded-full object-cover">`;
+                } else {
+                    document.getElementById('user-avatar').textContent = user.first_name.charAt(0).toUpperCase();
+                }
+            }
+        }
+
+        // Внутреннее динамическое состояние MVP
         let appState = {
             balance: 150,
             bookings: [],
             currentScreen: 'home'
         };
         
-        // Инициализация локаций
+        // Список бьюти-локаций Нижнего Новгорода
         const locations = [
             {
                 id: 1,
                 name: "KUBIX Центр",
                 address: "ул. Большая Покровская, 47",
                 rating: 4.9,
-                price: 2,
+                price: 2, // стоимость в кубиках в час
                 image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400",
-                amenities: ["Премиум кресла", "LED-освещение", "Кофе-бар"]
+                amenities: ["Премиум кресла", "LED-кольца 50вт", "Кофе-бар"]
             },
             {
                 id: 2,
@@ -299,7 +359,7 @@
                 rating: 4.8,
                 price: 2,
                 image: "https://images.unsplash.com/photo-1487412912498-0447578fcca8?w=400",
-                amenities: ["VIP-зона", "Стойка ресепшн", "Парковка"]
+                amenities: ["VIP-мойки", "Стойка ресепшн", "Парковка"]
             },
             {
                 id: 3,
@@ -308,86 +368,68 @@
                 rating: 4.7,
                 price: 1,
                 image: "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400",
-                amenities: ["Панорамные окна", "Кондиционер", "Wi-Fi"]
-            },
-            {
-                id: 4,
-                name: "KUBIX Верхние Печеры",
-                address: "ул. Казанское шоссе, 10к1",
-                rating: 4.9,
-                price: 2,
-                image: "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?w=400",
-                amenities: ["Премиум интерьер", "Фото-зона", "Лаунж"]
+                amenities: ["Панорамные окна", "Вытяжки для кератина", "Wi-Fi 200мб/с"]
             }
         ];
         
-        // Инициализация Three.js куба
+        // Инициализация красивого 3D куба (Three.js)
         function initThreeCube() {
             const container = document.getElementById('three-cube');
+            if(!container) return;
+            container.innerHTML = '';
+            
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
             const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             
-            renderer.setSize(250, 250);
+            renderer.setSize(220, 220);
             renderer.setClearColor(0x000000, 0);
             container.appendChild(renderer.domElement);
             
-            // Создание геометрического куба
-            const geometry = new THREE.BoxGeometry(2, 2, 2);
-            
-            // Создание материала с золотым оттенком
+            const geometry = new THREE.BoxGeometry(2.1, 2.1, 2.1);
             const material = new THREE.MeshPhongMaterial({
                 color: 0xc9a84c,
-                emissive: 0x1a1a2e,
-                shininess: 100,
+                emissive: 0x111122,
+                shininess: 80,
                 transparent: true,
-                opacity: 0.9,
-                wireframe: false
+                opacity: 0.85
             });
             
             const cube = new THREE.Mesh(geometry, material);
-            
-            // Добавление граней
             const edges = new THREE.EdgesGeometry(geometry);
-            const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xe8d5a3, linewidth: 1 }));
+            const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0xe8d5a3, linewidth: 1.5 }));
             cube.add(line);
-            
             scene.add(cube);
             
-            // Освещение
-            const light1 = new THREE.PointLight(0xc9a84c, 1, 100);
+            const light1 = new THREE.PointLight(0xc9a84c, 1.2, 100);
             light1.position.set(5, 5, 5);
             scene.add(light1);
             
-            const light2 = new THREE.PointLight(0x1a1a2e, 0.5, 100);
+            const light2 = new THREE.PointLight(0x1a1a2e, 0.8, 100);
             light2.position.set(-5, -5, -5);
             scene.add(light2);
             
-            const ambientLight = new THREE.AmbientLight(0x404040);
-            scene.add(ambientLight);
+            scene.add(new THREE.AmbientLight(0x333333));
+            camera.position.z = 4.6;
             
-            camera.position.z = 5;
-            
-            // Анимация
             function animate() {
                 requestAnimationFrame(animate);
-                
-                cube.rotation.x += 0.01;
-                cube.rotation.y += 0.01;
-                
+                cube.rotation.x += 0.008;
+                cube.rotation.y += 0.008;
                 renderer.render(scene, camera);
             }
-            
             animate();
         }
         
-        // Переключение экранов
+        // Навигация между экранами приложения
         function switchScreen(screen) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             
             document.getElementById(`${screen}-screen`).classList.add('active');
-            document.querySelector(`[onclick="switchScreen('${screen}')"]`).classList.add('active');
+            
+            const clickedNavItem = document.querySelector(`[onclick="switchScreen('${screen}')"]`);
+            if(clickedNavItem) clickedNavItem.classList.add('active');
             
             appState.currentScreen = screen;
             
@@ -396,71 +438,93 @@
             if (screen === 'home') updateBalanceDisplay();
         }
         
-        // Покупка кубиков
+        // Пополнение баланса кубиков
         function purchaseCubes(amount, price) {
-            if (confirm(`Купить ${amount} кубиков за ${price} ₽?`)) {
-                // Имитация платежа
-                setTimeout(() => {
-                    appState.balance += amount;
-                    updateBalanceDisplay();
-                    alert(`✅ Успешно! ${amount} кубиков добавлены на ваш баланс`);
-                }, 500);
+            if (confirm(`Пополнить счет на ${amount} ◈ за ${price} ₽?`)) {
+                if (tg && tg.showPopup) {
+                    tg.showPopup({
+                        title: 'Имитация платежа',
+                        message: `Производится транзакция на сумму ${price} ₽ через платежный шлюз Telegram.`,
+                        buttons: [{id: 'ok', type: 'default', text: 'Оплатить'}]
+                    }, (buttonId) => {
+                        processPayment(amount);
+                    });
+                } else {
+                    setTimeout(() => processPayment(amount), 400);
+                }
             }
         }
+
+        function processPayment(amount) {
+            appState.balance += amount;
+            updateBalanceDisplay();
+            alert(`✅ Баланс успешно пополнен на +${amount} ◈`);
+        }
         
-        // Обновление отображения баланса
+        // Синхронизация полей баланса во всем приложении
         function updateBalanceDisplay() {
             document.getElementById('balance-display').textContent = appState.balance;
             document.getElementById('profile-balance').textContent = appState.balance;
         }
         
-        // Отображение локаций
+        // Рендеринг списка локаций коворкингов
         function renderLocations() {
             const container = document.getElementById('locations-list');
+            if(!container) return;
             container.innerHTML = '';
+            
+            // Динамический расчет актуальной даты для инпута (сегодня)
+            const todayStr = new Date().toISOString().split('T')[0];
             
             locations.forEach(location => {
                 const card = document.createElement('div');
                 card.className = 'glass-effect rounded-2xl overflow-hidden';
                 card.innerHTML = `
-                    <div class="relative h-40 bg-cover bg-center" style="background-image: url('${location.image}')">
+                    <div class="relative h-36 bg-cover bg-center" style="background-image: url('${location.image}')">
                         <div class="absolute inset-0 bg-gradient-to-t from-dark to-transparent"></div>
                         <div class="absolute bottom-3 left-3">
-                            <span class="bg-accent/20 backdrop-blur-sm text-accent px-3 py-1 rounded-full text-sm">
+                            <span class="bg-black/40 backdrop-blur-md text-accent px-2.5 py-0.5 rounded-full text-xs font-semibold">
                                 ⭐ ${location.rating}
                             </span>
                         </div>
                     </div>
                     <div class="p-4">
-                        <h3 class="text-xl font-bold text-white mb-1">${location.name}</h3>
-                        <p class="text-gray-400 text-sm mb-3">📍 ${location.address}</p>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            ${location.amenities.map(a => `<span class="text-xs bg-accent/10 text-accent-light px-2 py-1 rounded-full">${a}</span>`).join('')}
+                        <h3 class="text-lg font-bold text-white mb-0.5">${location.name}</h3>
+                        <p class="text-gray-400 text-xs mb-3">📍 ${location.address}</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            ${location.amenities.map(a => `<span class="text-[10px] bg-accent/10 text-accent-light px-2 py-0.5 rounded-md">${a}</span>`).join('')}
                         </div>
                         <div class="flex justify-between items-center">
                             <div>
-                                <p class="text-accent font-bold text-lg">${location.price} 🧊/час</p>
-                                <p class="text-gray-500 text-xs">1 час аренды</p>
+                                <p class="text-accent font-extrabold text-base">${location.price} ◈ / час</p>
+                                <p class="text-gray-500 text-[10px]">Тарифицируется поминутно</p>
                             </div>
-                            <button class="btn-primary px-4 py-2 rounded-xl" onclick="openBooking(${location.id})">
+                            <button class="btn-primary px-4 py-2 rounded-xl text-xs uppercase tracking-wider" onclick="toggleBookingForm(${location.id})">
                                 Забронировать
                             </button>
                         </div>
-                        <div id="booking-form-${location.id}" class="hidden mt-4">
-                            <div class="border-t border-accent/20 pt-4">
-                                <label class="text-sm text-gray-300">Дата:</label>
-                                <input type="date" id="date-${location.id}" class="date-picker" min="${new Date().toISOString().split('T')[0]}">
-                                <label class="text-sm text-gray-300 mt-3 block">Время:</label>
-                                <input type="time" id="time-${location.id}" class="time-picker">
-                                <label class="text-sm text-gray-300 mt-3 block">Длительность (часов):</label>
-                                <select id="duration-${location.id}" class="date-picker">
-                                    <option value="1">1 час - ${location.price} кубиков</option>
-                                    <option value="2">2 часа - ${location.price * 2} кубиков</option>
-                                    <option value="3">3 часа - ${location.price * 3} кубиков</option>
-                                    <option value="4">4 часа - ${location.price * 4} кубиков</option>
-                                </select>
-                                <button class="btn-primary w-full mt-4 py-2 rounded-xl" onclick="confirmBooking(${location.id})">
-                                    Подтвердить бронирование
+                        
+                        <div id="booking-form-${location.id}" class="hidden mt-4 border-t border-accent/10 pt-4">
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-xs text-gray-400 font-medium">Выберите дату сессии:</label>
+                                    <input type="date" id="date-${location.id}" class="date-picker" min="${todayStr}" value="${todayStr}">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-400 font-medium">Время начала:</label>
+                                    <input type="time" id="time-${location.id}" class="time-picker" value="12:00">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-400 font-medium">Длительность аренды:</label>
+                                    <select id="duration-${location.id}" class="date-picker text-sm">
+                                        <option value="1">1 час — ${location.price} ◈</option>
+                                        <option value="2">2 часа — ${location.price * 2} ◈</option>
+                                        <option value="4">4 часа — ${location.price * 4} ◈</option>
+                                        <option value="8">8 часов (День) — ${location.price * 7} ◈ (Скидка!)</option>
+                                    </select>
+                                </div>
+                                <button class="btn-primary w-full mt-2 py-2.5 rounded-xl text-xs uppercase font-bold tracking-wider" onclick="confirmBooking(${location.id})">
+                                    Подтвердить и оплатить счетом ◈
                                 </button>
                             </div>
                         </div>
@@ -470,13 +534,12 @@
             });
         }
         
-        // Открытие формы бронирования
-        function openBooking(locationId) {
+        function toggleBookingForm(locationId) {
             const form = document.getElementById(`booking-form-${locationId}`);
-            form.classList.toggle('hidden');
+            if(form) form.classList.toggle('hidden');
         }
         
-        // Подтверждение бронирования
+        // Логика проведения бронирования сессии
         function confirmBooking(locationId) {
             const date = document.getElementById(`date-${locationId}`).value;
             const time = document.getElementById(`time-${locationId}`).value;
@@ -484,21 +547,26 @@
             const location = locations.find(l => l.id === locationId);
             
             if (!date || !time) {
-                alert('Пожалуйста, выберите дату и время');
+                alert('Пожалуйста, корректно укажите дату и время брони');
                 return;
             }
             
-            const totalCubes = location.price * duration;
+            // Расчет скидки на полный день (8 часов)
+            let totalCubes = location.price * duration;
+            if (duration === 8) totalCubes = location.price * 7; 
             
             if (appState.balance < totalCubes) {
-                alert('❌ Недостаточно кубиков! Пополните баланс');
+                alert(`❌ Недостаточно кубиков!\nДля брони нужно: ${totalCubes} ◈\nВаш баланс: ${appState.balance} ◈\n\nПожалуйста, пополните баланс на главном экране.`);
+                switchScreen('home');
                 return;
             }
             
+            // Списываем кубики
             appState.balance -= totalCubes;
             updateBalanceDisplay();
             
-            const booking = {
+            // Создаем объект активного бронирования
+            const newBooking = {
                 id: Date.now(),
                 locationName: location.name,
                 address: location.address,
@@ -506,30 +574,33 @@
                 time: time,
                 duration: duration,
                 totalCubes: totalCubes,
-                status: 'Активно',
-                qrCode: `KUBIX-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                status: 'Активен',
+                qrCode: `KBX-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`
             };
             
-            appState.bookings.push(booking);
+            appState.bookings.unshift(newBooking); // Добавляем на первое место в массиве
             
-            document.getElementById(`booking-form-${locationId}`).classList.add('hidden');
+            // Если открыто в Telegram, можно запустить легкую вибрацию смартфона на успешное действие
+            if (tg && tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
             
-            alert(`✅ Забронировано! ${location.name}\n${date} в ${time}\nНа ${duration} час(а)\nСписано: ${totalCubes} кубиков`);
-            
-            renderLocations();
+            alert(`🎉 Успешно забронировано!\nЦифровой пропуск-код сгенерирован и добавлен во вкладку «Профиль».`);
+            switchScreen('profile');
         }
         
-        // Отображение бронирований
+        // Генерация и вывод пропусков и QR кодов в профиле
         function renderBookings() {
             const container = document.getElementById('bookings-list');
+            if(!container) return;
             
             if (appState.bookings.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-12">
-                        <i class="fas fa-calendar-times text-6xl text-gray-600 mb-4"></i>
-                        <p class="text-gray-400">У вас пока нет бронирований</p>
-                        <button class="btn-primary mt-4 px-6 py-2 rounded-xl" onclick="switchScreen('locations')">
-                            Найти локацию
+                    <div class="text-center py-10 glass-effect rounded-2xl p-4">
+                        <i class="fas fa-calendar-times text-4xl text-gray-600 mb-3"></i>
+                        <p class="text-gray-400 text-xs">У вас пока нет активных пропусков на аренду</p>
+                        <button class="btn-primary mt-4 px-5 py-2 rounded-xl text-xs uppercase font-bold" onclick="switchScreen('locations')">
+                            Найти рабочее место
                         </button>
                     </div>
                 `;
@@ -540,78 +611,83 @@
             
             appState.bookings.forEach(booking => {
                 const card = document.createElement('div');
-                card.className = 'glass-effect rounded-2xl p-4';
+                card.className = 'glass-effect rounded-2xl p-4 border border-white/5 bg-card/20';
                 card.innerHTML = `
                     <div class="flex justify-between items-start mb-3">
                         <div>
-                            <h3 class="text-lg font-bold text-white">${booking.locationName}</h3>
-                            <p class="text-gray-400 text-sm">📍 ${booking.address}</p>
+                            <h3 class="text-base font-bold text-white">${booking.locationName}</h3>
+                            <p class="text-gray-400 text-[11px]">📍 ${booking.address}</p>
                         </div>
-                        <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm">${booking.status}</span>
+                        <span class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-semibold px-2.5 py-0.5 rounded-full text-[10px]">
+                            ${booking.status}
+                        </span>
                     </div>
-                    <div class="grid grid-cols-2 gap-2 mb-4 text-sm">
+                    <div class="grid grid-cols-2 gap-y-2 gap-x-4 mb-4 text-xs border-y border-white/5 py-2.5">
                         <div>
-                            <p class="text-gray-500">Дата:</p>
-                            <p class="text-white">${booking.date}</p>
+                            <p class="text-gray-500 text-[10px] uppercase">Дата сессии</p>
+                            <p class="text-white font-medium mt-0.5">${booking.date}</p>
                         </div>
                         <div>
-                            <p class="text-gray-500">Время:</p>
-                            <p class="text-white">${booking.time}</p>
+                            <p class="text-gray-500 text-[10px] uppercase">Время (Начало)</p>
+                            <p class="text-white font-medium mt-0.5">${booking.time}</p>
                         </div>
                         <div>
-                            <p class="text-gray-500">Длительность:</p>
-                            <p class="text-white">${booking.duration} час(а)</p>
+                            <p class="text-gray-500 text-[10px] uppercase">Длительность</p>
+                            <p class="text-white font-medium mt-0.5">${booking.duration} час(а)</p>
                         </div>
                         <div>
-                            <p class="text-gray-500">Стоимость:</p>
-                            <p class="text-accent font-bold">${booking.totalCubes} 🧊</p>
+                            <p class="text-gray-500 text-[10px] uppercase">Списано со счета</p>
+                            <p class="text-accent font-bold mt-0.5">${booking.totalCubes} ◈</p>
                         </div>
                     </div>
-                    <div class="border-t border-accent/20 pt-3">
-                        <p class="text-gray-400 text-xs mb-2">QR-код для входа:</p>
-                        <div class="qr-code-container mx-auto w-fit" id="qr-${booking.id}"></div>
-                        <p class="text-gray-500 text-xs text-center mt-2">Покажите администратору</p>
+                    <div class="pt-1 text-center">
+                        <p class="text-gray-400 text-[11px] mb-2 font-medium">Электронный смарт-ключ доступа:</p>
+                        <div class="qr-code-container mx-auto" id="qr-${booking.id}"></div>
+                        <p class="text-gray-500 text-[9px] mt-2 tracking-wide uppercase">Покажите этот код администратору коворкинга</p>
                     </div>
                 `;
                 container.appendChild(card);
                 
-                // Генерация QR-кода
+                // Рендерим QR код библиотеки qrcode.js в созданный контейнер
                 setTimeout(() => {
                     new QRCode(document.getElementById(`qr-${booking.id}`), {
                         text: booking.qrCode,
-                        width: 128,
-                        height: 128,
+                        width: 110,
+                        height: 110,
                         colorDark: "#0a0a0f",
                         colorLight: "#ffffff",
-                        correctLevel: QRCode.CorrectLevel.H
+                        correctLevel: QRCode.CorrectLevel.M
                     });
-                }, 100);
+                }, 50);
             });
         }
         
-        // Инициализация приложения
+        // Запуск базового состояния приложения при старте
         function initApp() {
             initThreeCube();
             updateBalanceDisplay();
             
-            // Добавление тестового бронирования
-            if (appState.bookings.length === 0) {
-                appState.bookings.push({
-                    id: Date.now(),
-                    locationName: "KUBIX Центр",
-                    address: "ул. Большая Покровская, 47",
-                    date: "2024-12-25",
-                    time: "14:00",
-                    duration: 2,
-                    totalCubes: 4,
-                    status: 'Активно',
-                    qrCode: 'KUBIX-TEST-BOOKING-001'
-                });
-            }
+            // Динамический расчет текущей даты для демонстрационного бронирования (чтобы был 2026 год, а не старый)
+            const demoDate = new Date();
+            demoDate.setDate(demoDate.getDate() + 1); // Завтрашний день
+            const demoDateStr = demoDate.toISOString().split('T')[0];
+
+            // Создаем красивый дефолтный активный пропуск для демонстрации интерфейса
+            appState.bookings.push({
+                id: 999111,
+                locationName: "KUBIX Центр",
+                address: "ул. Большая Покровская, 47",
+                date: demoDateStr,
+                time: "15:00",
+                duration: 2,
+                totalCubes: 4,
+                status: 'Активен',
+                qrCode: 'KUBIX-DEMO-PASS-2026'
+            });
         }
         
-        // Запуск приложения
-        initApp();
+        // Официальный старт скрипта
+        window.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
